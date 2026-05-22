@@ -1,17 +1,18 @@
 import { shallowReactive, reactive, effectScope, getCurrentScope, hasInjectionContext, getCurrentInstance, inject, toRef, shallowRef, isReadonly, isRef, isShallow, isReactive, toRaw, defineComponent, createElementBlock, provide, cloneVNode, h, defineAsyncComponent, computed, unref, Suspense, nextTick, mergeProps, ref, Fragment, withCtx, createVNode, useSSRContext, onErrorCaptured, onServerPrefetch, resolveDynamicComponent, createApp } from "vue";
-import { $fetch } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/ofetch/dist/node.mjs";
+import { $fetch as $fetch$1 } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/ofetch/dist/node.mjs";
 import { baseURL } from "#internal/nuxt/paths";
 import { createHooks } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/hookable/dist/index.mjs";
 import { getContext, executeAsync } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/unctx/dist/index.mjs";
-import { sanitizeStatusCode, createError as createError$1 } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/h3/dist/index.mjs";
+import { sanitizeStatusCode, createError as createError$1, getRequestHeaders, getRequestURL } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/h3/dist/index.mjs";
 import { shouldHydrate, setActivePinia, createPinia } from "pinia";
 import { defu } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/defu/dist/defu.mjs";
 import { START_LOCATION, createMemoryHistory, createRouter, useRoute as useRoute$1, RouterView } from "vue-router";
 import { hasProtocol, joinURL, parseURL, encodePath, decodePath, withQuery, isScriptProtocol } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/ufo/dist/index.mjs";
 import "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/klona/dist/index.mjs";
 import { ssrRenderComponent, ssrRenderSuspense, ssrRenderVNode } from "vue/server-renderer";
+import { useSeoMeta as useSeoMeta$1, useHead as useHead$1, headSymbol } from "C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/@unhead/vue/dist/index.mjs";
 if (!globalThis.$fetch) {
-  globalThis.$fetch = $fetch.create({
+  globalThis.$fetch = $fetch$1.create({
     baseURL: baseURL()
   });
 }
@@ -20,6 +21,8 @@ if (!("global" in globalThis)) {
 }
 const appLayoutTransition = false;
 const nuxtLinkDefaults = { "componentName": "NuxtLink" };
+const asyncDataDefaults = { "value": null, "errorValue": null, "deep": true };
+const fetchDefaults = {};
 const appId = "nuxt-app";
 function getNuxtAppCtx(id = appId) {
   return getContext(id, {
@@ -374,6 +377,26 @@ const createError = (error) => {
   });
   return nuxtError;
 };
+function injectHead(nuxtApp) {
+  const nuxt = nuxtApp || tryUseNuxtApp();
+  return nuxt?.ssrContext?.head || nuxt?.runWithContext(() => {
+    if (hasInjectionContext()) {
+      return inject(headSymbol);
+    }
+  });
+}
+function useHead(input, options = {}) {
+  const head = injectHead(options.nuxt);
+  if (head) {
+    return useHead$1(input, { head, ...options });
+  }
+}
+function useSeoMeta(input, options = {}) {
+  const head = injectHead(options.nuxt);
+  if (head) {
+    return useSeoMeta$1(input, { head, ...options });
+  }
+}
 const matcher = (m, p) => {
   return [];
 };
@@ -411,46 +434,95 @@ const unhead_k2P3m_ZDyjlr2mMYnoDPwavjsDN8hBlk9cFai0bbopU = /* @__PURE__ */ defin
 function toArray$1(value) {
   return Array.isArray(value) ? value : [value];
 }
+const __nuxt_page_meta$6 = { layout: false };
+const __nuxt_page_meta$5 = { layout: false };
+const __nuxt_page_meta$4 = { layout: false };
+const __nuxt_page_meta$3 = { layout: false };
+const __nuxt_page_meta$2 = { layout: false };
+const __nuxt_page_meta$1 = { layout: false };
+const __nuxt_page_meta = { layout: false };
 const _routes = [
   {
     name: "index",
     path: "/",
-    component: () => import("./_nuxt/index-aDDMQSyi.js")
+    component: () => import("./_nuxt/index-DPBDwRuD.js")
   },
   {
     name: "blog",
     path: "/blog",
-    component: () => import("./_nuxt/index-Cjg-4ZTP.js")
+    component: () => import("./_nuxt/index-BONxZRQq.js")
   },
   {
     name: "about",
     path: "/about",
-    component: () => import("./_nuxt/index-BIBp5T7_.js")
+    component: () => import("./_nuxt/index-DgrbGPAf.js")
+  },
+  {
+    name: "admin",
+    path: "/admin",
+    meta: { ...__nuxt_page_meta$6 || {}, ...{ "middleware": "admin" } },
+    component: () => import("./_nuxt/index-9KnoRRnt.js")
+  },
+  {
+    name: "admin-leads",
+    path: "/admin/leads",
+    meta: { ...__nuxt_page_meta$5 || {}, ...{ "middleware": "admin" } },
+    component: () => import("./_nuxt/leads-CTtB9zVp.js")
+  },
+  {
+    name: "admin-login",
+    path: "/admin/login",
+    meta: __nuxt_page_meta$4 || {},
+    component: () => import("./_nuxt/login-BljdwlbP.js")
   },
   {
     name: "blog-slug",
     path: "/blog/:slug()",
-    component: () => import("./_nuxt/_slug_-Dtj2N_Fp.js")
+    component: () => import("./_nuxt/_slug_-B29JhDDP.js")
+  },
+  {
+    name: "admin-admins",
+    path: "/admin/admins",
+    meta: { ...__nuxt_page_meta$3 || {}, ...{ "middleware": "admin" } },
+    component: () => import("./_nuxt/admins-Hq_7tVwn.js")
+  },
+  {
+    name: "admin-projects",
+    path: "/admin/projects",
+    meta: { ...__nuxt_page_meta$2 || {}, ...{ "middleware": "admin" } },
+    component: () => import("./_nuxt/projects-xtOe249Y.js")
+  },
+  {
+    name: "admin-register",
+    path: "/admin/register",
+    meta: __nuxt_page_meta$1 || {},
+    component: () => import("./_nuxt/register-CwN_6nKC.js")
+  },
+  {
+    name: "admin-services",
+    path: "/admin/services",
+    meta: { ...__nuxt_page_meta || {}, ...{ "middleware": "admin" } },
+    component: () => import("./_nuxt/services-CpoZfYjB.js")
   },
   {
     name: "projects",
     path: "/projects",
-    component: () => import("./_nuxt/index-FsG4cqeL.js")
+    component: () => import("./_nuxt/index-DCettG3s.js")
   },
   {
     name: "services",
     path: "/services",
-    component: () => import("./_nuxt/index-RpZSJjj4.js")
+    component: () => import("./_nuxt/index-Bp-d5P46.js")
   },
   {
     name: "projects-slug",
     path: "/projects/:slug()",
-    component: () => import("./_nuxt/_slug_-CxAFnFGX.js")
+    component: () => import("./_nuxt/_slug_-mOCoNLJL.js")
   },
   {
     name: "services-slug",
     path: "/services/:slug()",
-    component: () => import("./_nuxt/_slug_-DJLDpruw.js")
+    component: () => import("./_nuxt/_slug_-Cwp0ofFP.js")
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -611,7 +683,9 @@ const globalMiddleware = [
   validate,
   manifest_45route_45rule
 ];
-const namedMiddleware = {};
+const namedMiddleware = {
+  admin: () => import("./_nuxt/admin-CurdkfV6.js")
+};
 const plugin$1 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:router",
   enforce: "pre",
@@ -873,6 +947,34 @@ const __nuxt_component_1$1 = defineComponent({
     };
   }
 });
+function useRequestEvent(nuxtApp) {
+  nuxtApp ||= useNuxtApp();
+  return nuxtApp.ssrContext?.event;
+}
+function useRequestHeaders(include) {
+  const event = useRequestEvent();
+  const _headers = event ? getRequestHeaders(event) : {};
+  if (!include || !event) {
+    return _headers;
+  }
+  const headers = /* @__PURE__ */ Object.create(null);
+  for (const _key of include) {
+    const key = _key.toLowerCase();
+    const header = _headers[key];
+    if (header) {
+      headers[key] = header;
+    }
+  }
+  return headers;
+}
+function useRequestFetch() {
+  return useRequestEvent()?.$fetch || globalThis.$fetch;
+}
+function useRequestURL(opts) {
+  {
+    return getRequestURL(useRequestEvent(), opts);
+  }
+}
 const plugin = /* @__PURE__ */ defineNuxtPlugin({
   name: "pinia",
   setup(nuxtApp) {
@@ -908,7 +1010,7 @@ const plugins = [
   components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4
 ];
 const layouts = {
-  default: defineAsyncComponent(() => import("./_nuxt/default-DU831cF1.js").then((m) => m.default || m))
+  default: defineAsyncComponent(() => import("./_nuxt/default-BtaPPUuT.js").then((m) => m.default || m))
 };
 const routeRulesMatcher = _routeRulesMatcher;
 const LayoutLoader = defineComponent({
@@ -1145,37 +1247,84 @@ function normalizeSlot(slot, data) {
   const slotContent = slot(data);
   return slotContent.length === 1 ? h(slotContent[0]) : h(Fragment, void 0, slotContent);
 }
-const _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
-  }
-  return target;
-};
-const _sfc_main$2 = {};
-function _sfc_ssrRender(_ctx, _push, _parent, _attrs) {
-  const _component_NuxtLayout = __nuxt_component_0;
-  const _component_NuxtPage = __nuxt_component_1;
-  _push(ssrRenderComponent(_component_NuxtLayout, _attrs, {
-    default: withCtx((_, _push2, _parent2, _scopeId) => {
-      if (_push2) {
-        _push2(ssrRenderComponent(_component_NuxtPage, null, null, _parent2, _scopeId));
-      } else {
-        return [
-          createVNode(_component_NuxtPage)
-        ];
+const defaultOgDescription = "URBANTECHSTROY — строительная компания. Жилые и коммерческие объекты, капитальный ремонт, инженерные и отделочные работы, благоустройство. Оставьте заявку — рассчитаем сроки и стоимость проекта.";
+const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+  __name: "app",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const route = useRoute();
+    const config = /* @__PURE__ */ useRuntimeConfig();
+    const pub = config.public;
+    const description = String(pub.ogDescription || "").trim() || defaultOgDescription;
+    const siteOrigin = computed(() => {
+      const fromEnv = String(pub.siteUrl || "").trim().replace(/\/$/, "");
+      if (fromEnv) return fromEnv;
+      {
+        try {
+          return useRequestURL().origin;
+        } catch {
+          return "";
+        }
       }
-    }),
-    _: 1
-  }, _parent));
-}
+      return "";
+    });
+    const ogImage = computed(() => {
+      const o = siteOrigin.value;
+      if (!o) return void 0;
+      return `${o}/favicon.png`;
+    });
+    const ogPageUrl = computed(() => {
+      const o = siteOrigin.value;
+      if (!o) return void 0;
+      return `${o}${route.path}`;
+    });
+    useSeoMeta({
+      description,
+      ogSiteName: pub.siteName,
+      ogType: "website",
+      ogLocale: "ru_RU",
+      ogTitle: pub.siteName,
+      ogDescription: description,
+      ogImage: () => ogImage.value,
+      ogImageAlt: pub.siteName,
+      ogUrl: () => ogPageUrl.value,
+      twitterCard: "summary",
+      twitterTitle: pub.siteName,
+      twitterDescription: description,
+      twitterImage: () => ogImage.value
+    });
+    useHead({
+      htmlAttrs: { lang: "ru" },
+      link: computed(() => {
+        const o = siteOrigin.value;
+        if (!o) return [];
+        return [{ rel: "canonical", href: `${o}${route.path}` }];
+      })
+    });
+    return (_ctx, _push, _parent, _attrs) => {
+      const _component_NuxtLayout = __nuxt_component_0;
+      const _component_NuxtPage = __nuxt_component_1;
+      _push(ssrRenderComponent(_component_NuxtLayout, _attrs, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(ssrRenderComponent(_component_NuxtPage, null, null, _parent2, _scopeId));
+          } else {
+            return [
+              createVNode(_component_NuxtPage)
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+    };
+  }
+});
 const _sfc_setup$2 = _sfc_main$2.setup;
 _sfc_main$2.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
   (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("app.vue");
   return _sfc_setup$2 ? _sfc_setup$2(props, ctx) : void 0;
 };
-const AppComponent = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["ssrRender", _sfc_ssrRender]]);
 const _sfc_main$1 = {
   __name: "nuxt-error-page",
   __ssrInlineRender: true,
@@ -1190,8 +1339,8 @@ const _sfc_main$1 = {
     const statusText = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import("./_nuxt/error-404-Dq6Nb3cT.js"));
-    const _Error = defineAsyncComponent(() => import("./_nuxt/error-500-hFq-Q3JQ.js"));
+    const _Error404 = defineAsyncComponent(() => import("./_nuxt/error-404-UYKZ0Tv2.js"));
+    const _Error = defineAsyncComponent(() => import("./_nuxt/error-500-DT9aDd_P.js"));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({ status: unref(status), statusText: unref(statusText), statusCode: unref(status), statusMessage: unref(statusText), description: unref(description), stack: unref(stack) }, _attrs), null, _parent));
@@ -1249,7 +1398,7 @@ const _sfc_main = {
           } else if (unref(SingleRenderer)) {
             ssrRenderVNode(_push, createVNode(resolveDynamicComponent(unref(SingleRenderer)), null, null), _parent);
           } else {
-            _push(ssrRenderComponent(unref(AppComponent), null, null, _parent));
+            _push(ssrRenderComponent(unref(_sfc_main$2), null, null, _parent));
           }
         },
         _: 1
@@ -1283,18 +1432,24 @@ let entry;
 }
 const entry_default = ((ssrContext) => entry(ssrContext));
 export {
-  _export_sfc as _,
-  __nuxt_component_1$1 as a,
-  useRouter as b,
-  useNuxtApp as c,
-  useRuntimeConfig as d,
+  __nuxt_component_1$1 as _,
+  useSeoMeta as a,
+  useRoute as b,
+  useRequestFetch as c,
+  useRouter as d,
   entry_default as default,
-  encodeRoutePath as e,
-  nuxtLinkDefaults as f,
-  hashMode as h,
+  useNuxtApp as e,
+  fetchDefaults as f,
+  asyncDataDefaults as g,
+  createError as h,
+  encodeRoutePath as i,
+  hashMode as j,
+  useRuntimeConfig as k,
+  nuxtLinkDefaults as l,
+  defineNuxtRouteMiddleware as m,
   navigateTo as n,
+  useRequestHeaders as o,
   resolveRouteObject as r,
-  tryUseNuxtApp as t,
-  useRoute as u
+  useHead as u
 };
 //# sourceMappingURL=server.mjs.map

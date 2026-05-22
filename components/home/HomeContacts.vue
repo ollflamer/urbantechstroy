@@ -90,6 +90,57 @@
 					</div>
 				</Reveal>
 			</div>
+
+			<Reveal variant="fade-up" class="mt-10 lg:mt-14">
+				<div
+					class="mx-auto max-w-[640px] rounded-[16px] border border-[#E5E7EB] bg-white p-6 shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.1),0px_10px_15px_-3px_rgba(0,0,0,0.1)] sm:p-8"
+				>
+					<h3 class="text-center text-xl font-bold text-[#101828] sm:text-2xl">
+						Оставить заявку
+					</h3>
+					<p class="mt-2 text-center text-sm text-[#4A5565]">
+						Оставьте контакты — перезвоним и обсудим ваш проект
+					</p>
+					<form class="mt-6 space-y-4" @submit.prevent="onLeadSubmit">
+						<input
+							v-model="leadForm.name"
+							type="text"
+							class="field-control"
+							placeholder="Ваше имя"
+							required
+						/>
+						<input
+							v-model="leadForm.phone"
+							type="tel"
+							class="field-control"
+							placeholder="+998 __ ___ __ __"
+							required
+						/>
+						<textarea
+							v-model="leadForm.message"
+							rows="4"
+							class="field-control min-h-[120px] resize-y py-3"
+							placeholder="Сообщение (необязательно)"
+						/>
+						<button
+							type="submit"
+							:disabled="leadSubmitting"
+							class="w-full rounded-[14px] bg-[#155DFC] py-3.5 text-sm font-semibold text-white disabled:opacity-60 sm:text-base"
+						>
+							{{ leadSubmitting ? 'Отправка…' : 'Отправить' }}
+						</button>
+						<p
+							v-if="leadOk"
+							class="text-center text-sm font-medium text-green-700"
+						>
+							Спасибо! Заявка принята.
+						</p>
+						<p v-if="leadErr" class="text-center text-sm text-red-600">
+							{{ leadErr }}
+						</p>
+					</form>
+				</div>
+			</Reveal>
 		</div>
 	</section>
 </template>
@@ -97,6 +148,40 @@
 <script setup lang="ts">
 import { defineComponent, h } from 'vue'
 import { officeAddress, yandexMapsRouteUrl } from '~/data/contacts'
+
+const leadForm = reactive({
+	name: '',
+	phone: '',
+	message: '',
+})
+const leadSubmitting = ref(false)
+const leadOk = ref(false)
+const leadErr = ref('')
+
+const onLeadSubmit = async () => {
+	leadErr.value = ''
+	leadOk.value = false
+	leadSubmitting.value = true
+	try {
+		await $fetch('/api/leads', {
+			method: 'POST',
+			body: {
+				source: 'contact',
+				name: leadForm.name,
+				phone: leadForm.phone,
+				message: leadForm.message || undefined,
+			},
+		})
+		leadOk.value = true
+		leadForm.name = ''
+		leadForm.phone = ''
+		leadForm.message = ''
+	} catch {
+		leadErr.value = 'Не удалось отправить. Попробуйте позже или позвоните нам.'
+	} finally {
+		leadSubmitting.value = false
+	}
+}
 
 const contactCards = [
 	{ type: 'phones', title: 'Телефоны', iconSrc: '/icons/contact-phone.svg' },
@@ -164,3 +249,9 @@ const ContactCard = defineComponent({
 	},
 })
 </script>
+
+<style scoped>
+.field-control {
+	@apply h-[49px] w-full rounded-[14px] border border-[#D1D5DC] bg-white px-4 text-[16px] leading-6 text-[#101828] outline-none transition placeholder:text-[#101828]/50 focus:border-[#155DFC];
+}
+</style>

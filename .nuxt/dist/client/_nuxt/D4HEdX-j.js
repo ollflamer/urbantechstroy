@@ -1,1 +1,0 @@
-import{_ as t,o as s,c as o,V as n}from"./DSFelUou.js";const a={},c={class:"min-h-dvh overflow-x-hidden bg-white font-sans text-slate-900"};function r(e,d){return s(),o("div",c,[n(e.$slots,"default")])}const _=t(a,[["render",r]]);export{_ as default};

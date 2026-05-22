@@ -182,11 +182,14 @@
 </template>
 
 <script setup lang="ts">
-import { getServiceBySlug } from '~/data/services'
-
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
-const service = computed(() => getServiceBySlug(slug.value))
+
+const { data: servicesList } = await useSiteServicesList()
+
+const service = computed(
+	() => servicesList.value?.find(s => s.slug === slug.value) ?? null,
+)
 
 useSeoMeta({
 	title: () =>

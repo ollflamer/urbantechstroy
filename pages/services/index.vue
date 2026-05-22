@@ -37,7 +37,9 @@
 </template>
 
 <script setup lang="ts">
-import { services } from '~/data/services'
+const { data: servicesList } = await useSiteServicesList()
+
+const services = computed(() => servicesList.value ?? [])
 
 useSeoMeta({
 	title: 'Услуги — URBANTECHSTROY',

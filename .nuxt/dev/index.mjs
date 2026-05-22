@@ -1,12 +1,15 @@
 import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
 import { Server } from 'node:http';
-import { resolve, dirname, join } from 'node:path';
-import nodeCrypto from 'node:crypto';
+import { resolve, dirname, join, isAbsolute } from 'node:path';
+import nodeCrypto, { scryptSync, timingSafeEqual, randomBytes } from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, createError, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, getResponseStatusText } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, createError, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, appendResponseHeader, getRequestURL, getResponseHeader, removeResponseHeader, getQuery as getQuery$1, readBody, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getResponseStatus, getRouterParam, getCookie, setCookie, deleteCookie, readMultipartFormData, getHeader, sendStream, getResponseStatusText } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/h3/dist/index.mjs';
 import { escapeHtml } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/@vue/shared/dist/shared.cjs.js';
 import viteNodeEntry_mjs from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/@nuxt/vite-builder/dist/vite-node-entry.mjs';
 import { viteNodeFetch } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/@nuxt/vite-builder/dist/vite-node.mjs';
+import Database from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/better-sqlite3/lib/index.js';
+import { promises, mkdirSync, existsSync, createReadStream, readdirSync, unlinkSync } from 'node:fs';
+import { readFile, writeFile } from 'node:fs/promises';
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/vue-bundle-renderer/dist/runtime.mjs';
 import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, decodePath, withLeadingSlash, withoutTrailingSlash, encodePath, joinRelativeURL } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/ufo/dist/index.mjs';
 import { renderToString } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/vue/server-renderer/index.mjs';
@@ -26,7 +29,6 @@ import unstorage_47drivers_47fs from 'file://C:/Users/amirk/OneDrive/Desktop/Urb
 import file_58_47_47_47C_58_47Users_47amirk_47OneDrive_47Desktop_47UrbanTechStroy_47node_modules_47_64nuxt_47nitro_45server_47dist_47runtime_47utils_47cache_45driver_46js from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/@nuxt/nitro-server/dist/runtime/utils/cache-driver.js';
 import { digest } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/ohash/dist/index.mjs';
 import { toRouteMatcher, createRouter } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/radix3/dist/index.mjs';
-import { readFile } from 'node:fs/promises';
 import consola, { consola as consola$1 } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/consola/dist/index.mjs';
 import { ErrorParser } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/youch-core/build/index.js';
 import { Youch } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/youch/build/index.js';
@@ -35,7 +37,6 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { getContext } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/unctx/dist/index.mjs';
 import { captureRawStackTrace, parseRawStackTrace } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/errx/dist/index.js';
 import _wH6JrtIxmaSoA8lCPWFnE9z4lQeXW6H5z3l5aymEQw from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/@nuxt/vite-builder/dist/fix-stacktrace.mjs';
-import { promises } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname as dirname$1, resolve as resolve$1 } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/pathe/dist/index.mjs';
 import { walkResolver } from 'file://C:/Users/amirk/OneDrive/Desktop/UrbanTechStroy/node_modules/unhead/dist/utils.mjs';
@@ -639,22 +640,19 @@ const _inlineRuntimeConfig = {
     "routeRules": {
       "/__nuxt_error": {
         "cache": false
-      },
-      "/_nuxt/builds/meta/**": {
-        "headers": {
-          "cache-control": "public, max-age=31536000, immutable"
-        }
-      },
-      "/_nuxt/builds/**": {
-        "headers": {
-          "cache-control": "public, max-age=1, immutable"
-        }
       }
     }
   },
   "public": {
-    "siteName": "UrbanTechStroy Blog"
-  }
+    "siteName": "URBANTECHSTROY",
+    "siteUrl": "",
+    "ogDescription": ""
+  },
+  "adminPassword": "LolDragon2005",
+  "adminBootstrapEmail": "sergeodragon2005@gmail.com",
+  "adminSetupKey": "LolDragon2005",
+  "databasePath": ".data/site.db",
+  "uploadDir": ".data/uploads"
 };
 const envOptions = {
   prefix: "NITRO_",
@@ -2163,7 +2161,7 @@ function readAsset (id) {
   return promises.readFile(resolve$1(serverDir, assets[id].path))
 }
 
-const publicAssetBases = {"/_nuxt/builds/meta/":{"maxAge":31536000},"/_nuxt/builds/":{"maxAge":1}};
+const publicAssetBases = {};
 
 function isPublicAssetURL(id = '') {
   if (assets[id]) {
@@ -2626,10 +2624,48 @@ async function getIslandContext(event) {
 	};
 }
 
+const _lazy_lpPOhW = () => Promise.resolve().then(function () { return admins_get$1; });
+const _lazy_6vhzkB = () => Promise.resolve().then(function () { return admins_post$1; });
+const _lazy_HDPCJs = () => Promise.resolve().then(function () { return _id__delete$1; });
+const _lazy__DkAWQ = () => Promise.resolve().then(function () { return _id__put$1; });
+const _lazy_5XJhuq = () => Promise.resolve().then(function () { return bootstrap_get$1; });
+const _lazy_mvVXls = () => Promise.resolve().then(function () { return leads_get$1; });
+const _lazy_sCAzNr = () => Promise.resolve().then(function () { return login_post$1; });
+const _lazy_GXfTTM = () => Promise.resolve().then(function () { return logout_post$1; });
+const _lazy_ihASV8 = () => Promise.resolve().then(function () { return me_get$1; });
+const _lazy_t89qpx = () => Promise.resolve().then(function () { return projects_get$3; });
+const _lazy_pNimKj = () => Promise.resolve().then(function () { return projects_put$1; });
+const _lazy_T43fAU = () => Promise.resolve().then(function () { return services_get$3; });
+const _lazy_P0nDO7 = () => Promise.resolve().then(function () { return services_put$1; });
+const _lazy_Z48gbN = () => Promise.resolve().then(function () { return register_post$1; });
+const _lazy_eJLRWd = () => Promise.resolve().then(function () { return upload_post$1; });
+const _lazy_3hPwre = () => Promise.resolve().then(function () { return projects_get$1; });
+const _lazy_33mTfW = () => Promise.resolve().then(function () { return services_get$1; });
+const _lazy_EPsUop = () => Promise.resolve().then(function () { return leads_post$1; });
+const _lazy_3oZND6 = () => Promise.resolve().then(function () { return _filename__get$1; });
 const _lazy_atRRbG = () => Promise.resolve().then(function () { return renderer; });
 
 const handlers = [
   { route: '', handler: _7QDfuH, lazy: false, middleware: true, method: undefined },
+  { route: '/api/admin/admins', handler: _lazy_lpPOhW, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/admins', handler: _lazy_6vhzkB, lazy: true, middleware: false, method: "post" },
+  { route: '/api/admin/admins/:id', handler: _lazy_HDPCJs, lazy: true, middleware: false, method: "delete" },
+  { route: '/api/admin/admins/:id', handler: _lazy__DkAWQ, lazy: true, middleware: false, method: "put" },
+  { route: '/api/admin/bootstrap', handler: _lazy_5XJhuq, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/leads', handler: _lazy_mvVXls, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/login', handler: _lazy_sCAzNr, lazy: true, middleware: false, method: "post" },
+  { route: '/api/admin/logout', handler: _lazy_GXfTTM, lazy: true, middleware: false, method: "post" },
+  { route: '/api/admin/me', handler: _lazy_ihASV8, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/overrides/projects', handler: _lazy_t89qpx, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/overrides/projects', handler: _lazy_pNimKj, lazy: true, middleware: false, method: "put" },
+  { route: '/api/admin/overrides/services', handler: _lazy_T43fAU, lazy: true, middleware: false, method: "get" },
+  { route: '/api/admin/overrides/services', handler: _lazy_P0nDO7, lazy: true, middleware: false, method: "put" },
+  { route: '/api/admin/register', handler: _lazy_Z48gbN, lazy: true, middleware: false, method: "post" },
+  { route: '/api/admin/upload', handler: _lazy_eJLRWd, lazy: true, middleware: false, method: "post" },
+  { route: '/api/content/projects', handler: _lazy_3hPwre, lazy: true, middleware: false, method: "get" },
+  { route: '/api/content/services', handler: _lazy_33mTfW, lazy: true, middleware: false, method: "get" },
+  { route: '/api/leads', handler: _lazy_EPsUop, lazy: true, middleware: false, method: "post" },
+  { route: '/api/uploads/:filename', handler: _lazy_3oZND6, lazy: true, middleware: false, method: "get" },
   { route: '/__nuxt_error', handler: _lazy_atRRbG, lazy: true, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: handler$1, lazy: false, middleware: false, method: undefined },
   { route: '/**', handler: _lazy_atRRbG, lazy: true, middleware: false, method: undefined }
@@ -2984,6 +3020,1337 @@ const styles$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   default: styles
 }, Symbol.toStringTag, { value: 'Module' }));
 
+const PREFIX = "v1";
+function hashPassword(password) {
+  const salt = randomBytes(16);
+  const key = scryptSync(password, salt, 64);
+  return `${PREFIX}$${salt.toString("hex")}$${key.toString("hex")}`;
+}
+function verifyPassword(password, stored) {
+  try {
+    const [ver, saltHex, hashHex] = stored.split("$");
+    if (ver !== PREFIX || !saltHex || !hashHex) return false;
+    const salt = Buffer.from(saltHex, "hex");
+    const expected = Buffer.from(hashHex, "hex");
+    const key = scryptSync(password, salt, expected.length);
+    return key.length === expected.length && timingSafeEqual(key, expected);
+  } catch {
+    return false;
+  }
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function trimEnvValue(raw) {
+  if (raw == null) return "";
+  return String(raw).replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").trim();
+}
+function normalizeAdminEmail(raw) {
+  return raw.trim().toLowerCase();
+}
+function isValidAdminEmail(email) {
+  return EMAIL_RE.test(email);
+}
+
+let _db = null;
+function initSchema(db) {
+  db.exec(`
+		CREATE TABLE IF NOT EXISTS content_overrides (
+			kind TEXT PRIMARY KEY,
+			payload TEXT NOT NULL,
+			updated_at INTEGER NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS leads (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			source TEXT NOT NULL,
+			name TEXT,
+			phone TEXT NOT NULL,
+			email TEXT,
+			message TEXT,
+			metadata TEXT,
+			created_at INTEGER NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS admin_sessions (
+			token TEXT PRIMARY KEY,
+			expires_at INTEGER NOT NULL
+		);
+		CREATE TABLE IF NOT EXISTS admins (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+			password_hash TEXT NOT NULL,
+			created_at INTEGER NOT NULL,
+			updated_at INTEGER NOT NULL
+		);
+	`);
+  const sessCols = db.prepare(`PRAGMA table_info(admin_sessions)`).all();
+  if (!sessCols.some((c) => c.name === "admin_id")) {
+    db.exec("ALTER TABLE admin_sessions ADD COLUMN admin_id INTEGER");
+  }
+  db.prepare("DELETE FROM admin_sessions WHERE admin_id IS NULL").run();
+}
+function applyEnvBootstrapAdmin(db) {
+  let pw = "";
+  let emailFromConfig = "";
+  try {
+    const rc = useRuntimeConfig();
+    pw = trimEnvValue(
+      String(rc.adminPassword || "") || process.env.NUXT_ADMIN_PASSWORD
+    );
+    emailFromConfig = trimEnvValue(
+      String(rc.adminBootstrapEmail || "") || process.env.NUXT_ADMIN_EMAIL
+    );
+  } catch {
+    pw = trimEnvValue(process.env.NUXT_ADMIN_PASSWORD);
+    emailFromConfig = trimEnvValue(process.env.NUXT_ADMIN_EMAIL);
+  }
+  if (!pw) return;
+  const fallbackEmail = "admin@urbantechstroy.local";
+  const email = normalizeAdminEmail(emailFromConfig || fallbackEmail);
+  if (!isValidAdminEmail(email)) {
+    console.warn(
+      "[UrbanTechStroy] NUXT_ADMIN_EMAIL \u043D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u0435\u043D \u2014 bootstrap-\u0430\u0434\u043C\u0438\u043D \u043D\u0435 \u043F\u0440\u0438\u043C\u0435\u043D\u0451\u043D."
+    );
+    return;
+  }
+  const hash = hashPassword(pw);
+  const now = Date.now();
+  const count = db.prepare("SELECT COUNT(*) as c FROM admins").get().c;
+  if (count === 0) {
+    db.prepare(
+      `INSERT INTO admins (email, password_hash, created_at, updated_at)
+			 VALUES (?, ?, ?, ?)`
+    ).run(email, hash, now, now);
+    return;
+  }
+  const match = db.prepare(`SELECT id FROM admins WHERE email = ? COLLATE NOCASE LIMIT 1`).get(email);
+  if (match) {
+    db.prepare(
+      `UPDATE admins SET password_hash = ?, updated_at = ? WHERE id = ?`
+    ).run(hash, now, match.id);
+    db.prepare("DELETE FROM admin_sessions WHERE admin_id = ?").run(match.id);
+    return;
+  }
+  if (count === 1) {
+    const only = db.prepare(`SELECT id FROM admins ORDER BY id ASC LIMIT 1`).get();
+    db.prepare(
+      `UPDATE admins SET email = ?, password_hash = ?, updated_at = ? WHERE id = ?`
+    ).run(email, hash, now, only.id);
+    db.prepare("DELETE FROM admin_sessions WHERE admin_id = ?").run(only.id);
+  }
+}
+function useDb() {
+  if (_db) return _db;
+  const config = useRuntimeConfig();
+  const path = config.databasePath || process.env.NUXT_DATABASE_PATH || ".data/site.db";
+  mkdirSync(dirname(path), { recursive: true });
+  _db = new Database(path);
+  _db.pragma("journal_mode = WAL");
+  initSchema(_db);
+  applyEnvBootstrapAdmin(_db);
+  return _db;
+}
+function getOverridesJson(kind) {
+  const row = useDb().prepare("SELECT payload FROM content_overrides WHERE kind = ?").get(kind);
+  if (!(row == null ? void 0 : row.payload)) return {};
+  try {
+    const parsed = JSON.parse(row.payload);
+    return typeof parsed === "object" && parsed !== null && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+function saveOverridesJson(kind, payload) {
+  const now = Date.now();
+  useDb().prepare(
+    `INSERT INTO content_overrides (kind, payload, updated_at)
+			 VALUES (@kind, @payload, @updated_at)
+			 ON CONFLICT(kind) DO UPDATE SET
+			 payload = excluded.payload,
+			 updated_at = excluded.updated_at`
+  ).run({
+    kind,
+    payload: JSON.stringify(payload),
+    updated_at: now
+  });
+}
+
+const COOKIE = "uts_admin";
+const WEEK_MS = 7 * 24 * 60 * 60 * 1e3;
+function createAdminSession(event, adminId) {
+  const token = randomBytes(32).toString("hex");
+  const expiresAt = Date.now() + WEEK_MS;
+  useDb().prepare(
+    "INSERT INTO admin_sessions (token, expires_at, admin_id) VALUES (?, ?, ?)"
+  ).run(token, expiresAt, adminId);
+  setCookie(event, COOKIE, token, {
+    httpOnly: true,
+    secure: false,
+    path: "/",
+    maxAge: Math.floor(WEEK_MS / 1e3),
+    sameSite: "lax"
+  });
+}
+function destroyAdminSession(event) {
+  const token = getCookie(event, COOKIE);
+  if (token) {
+    useDb().prepare("DELETE FROM admin_sessions WHERE token = ?").run(token);
+  }
+  deleteCookie(event, COOKIE, { path: "/" });
+}
+function getAdminToken(event) {
+  return getCookie(event, COOKIE) || void 0;
+}
+function assertAdmin(event) {
+  const token = getAdminToken(event);
+  if (!token) {
+    throw createError({ statusCode: 401, statusMessage: "\u0422\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044F \u0432\u0445\u043E\u0434" });
+  }
+  const row = useDb().prepare(
+    `SELECT a.id AS id, a.email AS email
+			 FROM admin_sessions s
+			 INNER JOIN admins a ON a.id = s.admin_id
+			 WHERE s.token = ? AND s.expires_at > ?`
+  ).get(token, Date.now());
+  if (!row) {
+    destroyAdminSession(event);
+    throw createError({ statusCode: 401, statusMessage: "\u0421\u0435\u0441\u0441\u0438\u044F \u0438\u0441\u0442\u0435\u043A\u043B\u0430" });
+  }
+  return row;
+}
+
+function listAdmins() {
+  return useDb().prepare(
+    `SELECT id, email, created_at, updated_at FROM admins ORDER BY id ASC`
+  ).all();
+}
+function countAdmins() {
+  const row = useDb().prepare("SELECT COUNT(*) as c FROM admins").get();
+  return row.c;
+}
+function getAdminById(id) {
+  return useDb().prepare(
+    `SELECT id, email, created_at, updated_at FROM admins WHERE id = ?`
+  ).get(id);
+}
+function getAdminWithHashByEmail(email) {
+  const norm = normalizeAdminEmail(email);
+  return useDb().prepare(
+    `SELECT id, email, password_hash FROM admins WHERE email = ? COLLATE NOCASE`
+  ).get(norm);
+}
+function insertAdmin(emailRaw, plainPassword) {
+  const email = normalizeAdminEmail(emailRaw);
+  if (!isValidAdminEmail(email)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041B\u043E\u0433\u0438\u043D \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u043C \u0430\u0434\u0440\u0435\u0441\u043E\u043C \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B"
+    });
+  }
+  if (plainPassword.length < 8) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041F\u0430\u0440\u043E\u043B\u044C \u043D\u0435 \u043A\u043E\u0440\u043E\u0447\u0435 8 \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432"
+    });
+  }
+  const now = Date.now();
+  const hash = hashPassword(plainPassword);
+  try {
+    const res = useDb().prepare(
+      `INSERT INTO admins (email, password_hash, created_at, updated_at)
+				 VALUES (@email, @password_hash, @created_at, @updated_at)`
+    ).run({
+      email,
+      password_hash: hash,
+      created_at: now,
+      updated_at: now
+    });
+    const id = Number(res.lastInsertRowid);
+    const row = getAdminById(id);
+    if (!row) {
+      throw createError({ statusCode: 500, statusMessage: "\u041E\u0448\u0438\u0431\u043A\u0430 \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F" });
+    }
+    return row;
+  } catch (e) {
+    if (e && typeof e === "object" && "code" in e && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      throw createError({
+        statusCode: 409,
+        statusMessage: "\u0410\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440 \u0441 \u0442\u0430\u043A\u0438\u043C email \u0443\u0436\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442"
+      });
+    }
+    throw e;
+  }
+}
+function updateAdmin(id, patch, options) {
+  const row = getAdminById(id);
+  if (!row) {
+    throw createError({ statusCode: 404, statusMessage: "\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E" });
+  }
+  let email = row.email;
+  if (patch.email !== void 0) {
+    email = normalizeAdminEmail(patch.email);
+    if (!isValidAdminEmail(email)) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "\u041B\u043E\u0433\u0438\u043D \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u043C \u0430\u0434\u0440\u0435\u0441\u043E\u043C \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B"
+      });
+    }
+  }
+  const now = Date.now();
+  if (patch.plainPassword !== void 0 && patch.plainPassword.length > 0) {
+    if (patch.plainPassword.length < 8) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "\u041F\u0430\u0440\u043E\u043B\u044C \u043D\u0435 \u043A\u043E\u0440\u043E\u0447\u0435 8 \u0441\u0438\u043C\u0432\u043E\u043B\u043E\u0432"
+      });
+    }
+    const hash = hashPassword(patch.plainPassword);
+    const preserve = options == null ? void 0 : options.preserveSessionToken;
+    if (preserve) {
+      deleteOtherSessionsForAdmin(id, preserve);
+    } else {
+      deleteSessionsForAdmin(id);
+    }
+    try {
+      useDb().prepare(
+        `UPDATE admins SET email = ?, password_hash = ?, updated_at = ? WHERE id = ?`
+      ).run(email, hash, now, id);
+    } catch (e) {
+      if (e && typeof e === "object" && "code" in e && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
+        throw createError({
+          statusCode: 409,
+          statusMessage: "\u0410\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440 \u0441 \u0442\u0430\u043A\u0438\u043C email \u0443\u0436\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442"
+        });
+      }
+      throw e;
+    }
+  } else if (patch.email !== void 0 && email !== row.email) {
+    try {
+      useDb().prepare(`UPDATE admins SET email = ?, updated_at = ? WHERE id = ?`).run(email, now, id);
+    } catch (e) {
+      if (e && typeof e === "object" && "code" in e && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
+        throw createError({
+          statusCode: 409,
+          statusMessage: "\u0410\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440 \u0441 \u0442\u0430\u043A\u0438\u043C email \u0443\u0436\u0435 \u0441\u0443\u0449\u0435\u0441\u0442\u0432\u0443\u0435\u0442"
+        });
+      }
+      throw e;
+    }
+  }
+  const next = getAdminById(id);
+  if (!next) {
+    throw createError({ statusCode: 500, statusMessage: "\u041E\u0448\u0438\u0431\u043A\u0430 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u044F" });
+  }
+  return next;
+}
+function deleteSessionsForAdmin(adminId) {
+  useDb().prepare("DELETE FROM admin_sessions WHERE admin_id = ?").run(adminId);
+}
+function deleteOtherSessionsForAdmin(adminId, exceptToken) {
+  useDb().prepare("DELETE FROM admin_sessions WHERE admin_id = ? AND token != ?").run(adminId, exceptToken);
+}
+function deleteAdmin(id) {
+  const c = countAdmins();
+  if (c <= 1) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041D\u0435\u043B\u044C\u0437\u044F \u0443\u0434\u0430\u043B\u0438\u0442\u044C \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0433\u043E \u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440\u0430"
+    });
+  }
+  deleteSessionsForAdmin(id);
+  const res = useDb().prepare("DELETE FROM admins WHERE id = ?").run(id);
+  if (res.changes === 0) {
+    throw createError({ statusCode: 404, statusMessage: "\u041D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E" });
+  }
+}
+
+const admins_get = defineEventHandler((event) => {
+  assertAdmin(event);
+  return { admins: listAdmins() };
+});
+
+const admins_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: admins_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const admins_post = defineEventHandler(async (event) => {
+  var _a, _b;
+  assertAdmin(event);
+  const body = await readBody(
+    event
+  ).catch(() => ({}));
+  const email = (_a = body == null ? void 0 : body.email) != null ? _a : "";
+  const password = (_b = body == null ? void 0 : body.password) != null ? _b : "";
+  if (!email || !password) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 email \u0438 \u043F\u0430\u0440\u043E\u043B\u044C"
+    });
+  }
+  const row = insertAdmin(email, password);
+  return { ok: true, id: row.id };
+});
+
+const admins_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: admins_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__delete = defineEventHandler((event) => {
+  const me = assertAdmin(event);
+  const id = Number(getRouterParam(event, "id"));
+  if (!Number.isFinite(id) || id < 1) {
+    throw createError({ statusCode: 400, statusMessage: "\u041D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u044B\u0439 id" });
+  }
+  if (me.id === id) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041D\u0435\u043B\u044C\u0437\u044F \u0443\u0434\u0430\u043B\u0438\u0442\u044C \u0441\u0432\u043E\u044E \u0442\u0435\u043A\u0443\u0449\u0443\u044E \u0443\u0447\u0451\u0442\u043D\u0443\u044E \u0437\u0430\u043F\u0438\u0441\u044C"
+    });
+  }
+  deleteAdmin(id);
+  return { ok: true };
+});
+
+const _id__delete$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__delete
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _id__put = defineEventHandler(async (event) => {
+  const me = assertAdmin(event);
+  const id = Number(getRouterParam(event, "id"));
+  if (!Number.isFinite(id) || id < 1) {
+    throw createError({ statusCode: 400, statusMessage: "\u041D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u044B\u0439 id" });
+  }
+  const body = await readBody(event).catch(() => ({}));
+  const patch = {};
+  if (typeof body.email === "string" && body.email.trim()) {
+    patch.email = body.email;
+  }
+  if (typeof body.password === "string" && body.password.length > 0) {
+    patch.plainPassword = body.password;
+  }
+  if (patch.email === void 0 && patch.plainPassword === void 0) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041F\u0435\u0440\u0435\u0434\u0430\u0439\u0442\u0435 \u043D\u043E\u0432\u044B\u0439 email \u0438/\u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C"
+    });
+  }
+  const token = getAdminToken(event);
+  const preserve = me.id === id && patch.plainPassword !== void 0 && token ? token : void 0;
+  const row = updateAdmin(
+    id,
+    patch,
+    preserve ? { preserveSessionToken: preserve } : void 0
+  );
+  return { ok: true, admin: row };
+});
+
+const _id__put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _id__put
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const bootstrap_get = defineEventHandler(() => {
+  return {
+    hasAdmins: countAdmins() > 0
+  };
+});
+
+const bootstrap_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: bootstrap_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const leads_get = defineEventHandler((event) => {
+  assertAdmin(event);
+  const query = getQuery$1(event);
+  const limit = Math.min(Number(query.limit) || 100, 500);
+  const offset = Math.max(Number(query.offset) || 0, 0);
+  const rows = useDb().prepare(
+    `SELECT id, source, name, phone, email, message, metadata, created_at
+			 FROM leads ORDER BY id DESC LIMIT ? OFFSET ?`
+  ).all(limit, offset);
+  const total = useDb().prepare("SELECT COUNT(*) as c FROM leads").get().c;
+  return { items: rows, total, limit, offset };
+});
+
+const leads_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: leads_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const login_post = defineEventHandler(async (event) => {
+  if (countAdmins() === 0) {
+    throw createError({
+      statusCode: 503,
+      statusMessage: "\u041D\u0435\u0442 \u0443\u0447\u0451\u0442\u043D\u044B\u0445 \u0437\u0430\u043F\u0438\u0441\u0435\u0439. \u0417\u0430\u0434\u0430\u0439\u0442\u0435 NUXT_ADMIN_PASSWORD \u0438 NUXT_ADMIN_EMAIL (\u043F\u0435\u0440\u0432\u044B\u0439 \u0437\u0430\u043F\u0443\u0441\u043A) \u0438\u043B\u0438 \u0437\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u0443\u0439\u0442\u0435 \u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440\u0430 \u043F\u043E \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u043E\u043C\u0443 \u043A\u043B\u044E\u0447\u0443."
+    });
+  }
+  const body = await readBody(
+    event
+  ).catch(() => ({}));
+  const email = normalizeAdminEmail(trimEnvValue(body == null ? void 0 : body.email));
+  const password = trimEnvValue(body == null ? void 0 : body.password);
+  if (!email || !password) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 email \u0438 \u043F\u0430\u0440\u043E\u043B\u044C"
+    });
+  }
+  if (!isValidAdminEmail(email)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041B\u043E\u0433\u0438\u043D \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u043C \u0430\u0434\u0440\u0435\u0441\u043E\u043C \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B"
+    });
+  }
+  const row = getAdminWithHashByEmail(email);
+  if (!row || !verifyPassword(password, row.password_hash)) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "\u041D\u0435\u0432\u0435\u0440\u043D\u044B\u0439 email \u0438\u043B\u0438 \u043F\u0430\u0440\u043E\u043B\u044C"
+    });
+  }
+  createAdminSession(event, row.id);
+  return { ok: true };
+});
+
+const login_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: login_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const logout_post = defineEventHandler((event) => {
+  destroyAdminSession(event);
+  return { ok: true };
+});
+
+const logout_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: logout_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const me_get = defineEventHandler((event) => {
+  const admin = assertAdmin(event);
+  return { ok: true, role: "admin", email: admin.email, id: admin.id };
+});
+
+const me_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: me_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const projectCategories = [
+  { id: "all", label: "\u0412\u0441\u0435 \u043F\u0440\u043E\u0435\u043A\u0442\u044B" },
+  { id: "residential", label: "\u0416\u0438\u043B\u043E\u0435 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E" },
+  { id: "commercial", label: "\u041A\u043E\u043C\u043C\u0435\u0440\u0447\u0435\u0441\u043A\u0430\u044F \u043D\u0435\u0434\u0432\u0438\u0436\u0438\u043C\u043E\u0441\u0442\u044C" },
+  { id: "industrial", label: "\u041F\u0440\u043E\u043C\u044B\u0448\u043B\u0435\u043D\u043D\u043E\u0435 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E" },
+  { id: "repair", label: "\u0420\u0435\u043C\u043E\u043D\u0442" },
+  { id: "metal", label: "\u041C\u0435\u0442\u0430\u043B\u043B\u043E\u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0438" },
+  { id: "landscaping", label: "\u0411\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E" }
+];
+const PROJECT_CATEGORY_IDS = [
+  "residential",
+  "commercial",
+  "industrial",
+  "repair",
+  "metal",
+  "landscaping"
+];
+function isNonAllProjectCategory(id) {
+  return PROJECT_CATEGORY_IDS.includes(id);
+}
+function normalizeProject(project) {
+  var _a, _b;
+  if (isNonAllProjectCategory(project.category)) return project;
+  const fb = PROJECT_CATEGORY_IDS[0];
+  const label = (_b = (_a = projectCategories.find((c) => c.id === fb)) == null ? void 0 : _a.label) != null ? _b : "";
+  return { ...project, category: fb, categoryLabel: label };
+}
+const projects = [
+  {
+    slug: "zhiloj-kompleks-riverside",
+    category: "residential",
+    categoryLabel: "\u0416\u0438\u043B\u043E\u0435 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E",
+    title: '\u0416\u0438\u043B\u043E\u0439 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441 "Riverside"',
+    shortDescription: "\u0421\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0439 \u0436\u0438\u043B\u043E\u0439 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441 \u043F\u0440\u0435\u043C\u0438\u0443\u043C-\u043A\u043B\u0430\u0441\u0441\u0430 \u043D\u0430 \u0431\u0435\u0440\u0435\u0433\u0443 \u0440\u0435\u043A\u0438",
+    image: "/images/projects/project-riverside.png",
+    heroImage: "/images/projects/project-riverside.png",
+    location: "\u0422\u0430\u0448\u043A\u0435\u043D\u0442, \u0440\u0430\u0439\u043E\u043D \u0423\u0447\u0442\u0435\u043F\u0430",
+    area: "45,000 \u043C\xB2",
+    duration: "24 \u043C\u0435\u0441\u044F\u0446\u0430",
+    year: "2024",
+    description: '\u0416\u0438\u043B\u043E\u0439 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441 "Riverside" \u2014 \u044D\u0442\u043E \u0432\u043E\u043F\u043B\u043E\u0449\u0435\u043D\u0438\u0435 \u0441\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0433\u043E \u043A\u043E\u043C\u0444\u043E\u0440\u0442\u043D\u043E\u0433\u043E \u043F\u0440\u043E\u0436\u0438\u0432\u0430\u043D\u0438\u044F. \u041F\u0440\u043E\u0435\u043A\u0442 \u0432\u043A\u043B\u044E\u0447\u0430\u0435\u0442 \u0432 \u0441\u0435\u0431\u044F \u0442\u0440\u0438 12-\u044D\u0442\u0430\u0436\u043D\u044B\u0445 \u0437\u0434\u0430\u043D\u0438\u044F \u0441 \u0440\u0430\u0437\u0432\u0438\u0442\u043E\u0439 \u0438\u043D\u0444\u0440\u0430\u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u043E\u0439, \u043F\u043E\u0434\u0437\u0435\u043C\u043D\u044B\u043C \u043F\u0430\u0440\u043A\u0438\u043D\u0433\u043E\u043C \u0438 \u0431\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0435\u043D\u043D\u043E\u0439 \u0442\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0435\u0439. \u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u044B \u043F\u0435\u0440\u0435\u0434\u043E\u0432\u044B\u0435 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0430 \u0438 \u0432\u044B\u0441\u043E\u043A\u043E\u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0435 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u044B.',
+    features: [
+      "\u042D\u043D\u0435\u0440\u0433\u043E\u044D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u044B\u0435 \u0444\u0430\u0441\u0430\u0434\u044B",
+      "\u0421\u0438\u0441\u0442\u0435\u043C\u0430 \u0443\u043C\u043D\u044B\u0439 \u0434\u043E\u043C",
+      "\u041F\u043E\u0434\u0437\u0435\u043C\u043D\u044B\u0439 \u043F\u0430\u0440\u043A\u0438\u043D\u0433 \u043D\u0430 200 \u043C\u0435\u0441\u0442",
+      "\u0414\u0435\u0442\u0441\u043A\u0438\u0435 \u0438 \u0441\u043F\u043E\u0440\u0442\u0438\u0432\u043D\u044B\u0435 \u043F\u043B\u043E\u0449\u0430\u0434\u043A\u0438",
+      "\u0421\u043E\u0431\u0441\u0442\u0432\u0435\u043D\u043D\u0430\u044F \u043A\u043E\u0442\u0435\u043B\u044C\u043D\u0430\u044F",
+      "\u0412\u0438\u0434\u0435\u043E\u043D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435 \u0438 \u043E\u0445\u0440\u0430\u043D\u0430 24/7"
+    ],
+    gallery: [
+      "/images/projects/project-riverside.png",
+      "/images/projects/project-apartment-renovation.png",
+      "/images/projects/project-landscaping.png"
+    ]
+  },
+  {
+    slug: "kapitalnyj-remont-ofisa",
+    category: "commercial",
+    categoryLabel: "\u041A\u043E\u043C\u043C\u0435\u0440\u0447\u0435\u0441\u043A\u0430\u044F \u043D\u0435\u0434\u0432\u0438\u0436\u0438\u043C\u043E\u0441\u0442\u044C",
+    title: "\u041A\u0430\u043F\u0438\u0442\u0430\u043B\u044C\u043D\u044B\u0439 \u0440\u0435\u043C\u043E\u043D\u0442 \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E \u0437\u0434\u0430\u043D\u0438\u044F",
+    shortDescription: "\u041F\u043E\u043B\u043D\u0430\u044F \u0440\u0435\u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u044F \u043E\u0444\u0438\u0441\u043D\u043E\u0433\u043E \u0446\u0435\u043D\u0442\u0440\u0430 \u043A\u043B\u0430\u0441\u0441\u0430 \u0410",
+    image: "/images/projects/project-office-repair.png"
+  },
+  {
+    slug: "proizvodstvennyj-ceh",
+    category: "industrial",
+    categoryLabel: "\u041F\u0440\u043E\u043C\u044B\u0448\u043B\u0435\u043D\u043D\u043E\u0435 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E",
+    title: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u043F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0441\u0442\u0432\u0435\u043D\u043D\u043E\u0433\u043E \u0446\u0435\u0445\u0430",
+    shortDescription: "\u0421\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0439 \u043F\u0440\u043E\u0438\u0437\u0432\u043E\u0434\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0439 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441 \u0441 \u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u0438\u0432\u043D\u044B\u043C \u043A\u043E\u0440\u043F\u0443\u0441\u043E\u043C",
+    image: "/images/projects/project-production-hall.png"
+  },
+  {
+    slug: "remont-kvartir-premium",
+    category: "repair",
+    categoryLabel: "\u0420\u0435\u043C\u043E\u043D\u0442",
+    title: "\u0420\u0435\u043C\u043E\u043D\u0442 \u043A\u0432\u0430\u0440\u0442\u0438\u0440 \u043F\u0440\u0435\u043C\u0438\u0443\u043C-\u043A\u043B\u0430\u0441\u0441\u0430",
+    shortDescription: "\u0414\u0438\u0437\u0430\u0439\u043D\u0435\u0440\u0441\u043A\u0438\u0439 \u0440\u0435\u043C\u043E\u043D\u0442 \u043A\u0432\u0430\u0440\u0442\u0438\u0440 \u0432 \u044D\u043B\u0438\u0442\u043D\u043E\u043C \u0416\u041A",
+    image: "/images/projects/project-apartment-renovation.png"
+  },
+  {
+    slug: "montazh-metallokonstrukcij-angara",
+    category: "metal",
+    categoryLabel: "\u041C\u0435\u0442\u0430\u043B\u043B\u043E\u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0438",
+    title: "\u041C\u043E\u043D\u0442\u0430\u0436 \u043C\u0435\u0442\u0430\u043B\u043B\u043E\u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0439 \u0430\u043D\u0433\u0430\u0440\u0430",
+    shortDescription: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u0441\u043A\u043B\u0430\u0434\u0441\u043A\u043E\u0433\u043E \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u0430 \u0438\u0437 \u043C\u0435\u0442\u0430\u043B\u043B\u043E\u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0439",
+    image: "/images/projects/project-metal-warehouse.png"
+  },
+  {
+    slug: "blagoustrojstvo-territorii",
+    category: "landscaping",
+    categoryLabel: "\u0411\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E",
+    title: "\u0411\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0442\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0438",
+    shortDescription: "\u041A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u043D\u043E\u0435 \u0431\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0436\u0438\u043B\u043E\u0433\u043E \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u0430",
+    image: "/images/projects/project-landscaping.png"
+  }
+];
+
+const CONTENT_META_KEY = "_meta";
+function splitOverridesPayload(raw) {
+  const patches = { ...raw };
+  const metaRaw = patches[CONTENT_META_KEY];
+  delete patches[CONTENT_META_KEY];
+  let hiddenSlugs = [];
+  let deletedSlugs = [];
+  let extras = [];
+  if (metaRaw && typeof metaRaw === "object" && !Array.isArray(metaRaw)) {
+    const m = metaRaw;
+    if (Array.isArray(m.hiddenSlugs)) {
+      hiddenSlugs = m.hiddenSlugs.filter(
+        (x) => typeof x === "string"
+      );
+    }
+    if (Array.isArray(m.deletedSlugs)) {
+      deletedSlugs = m.deletedSlugs.filter(
+        (x) => typeof x === "string"
+      );
+    }
+    if (Array.isArray(m.extras)) {
+      extras = m.extras.filter(
+        (x) => Boolean(x) && typeof x === "object" && !Array.isArray(x) && typeof x.slug === "string"
+      );
+    }
+  }
+  return { meta: { hiddenSlugs, deletedSlugs, extras }, patches };
+}
+function applyObjectPatch(item, patch) {
+  if (!patch || typeof patch !== "object" || Array.isArray(patch)) {
+    return item;
+  }
+  return { ...item, ...patch };
+}
+
+const services = [
+  {
+    slug: "stroitelstvo-zhilyh-kompleksov",
+    title: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u0436\u0438\u043B\u044B\u0445 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u043E\u0432",
+    shortDescription: "\u041A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u043D\u043E\u0435 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u043C\u043D\u043E\u0433\u043E\u043A\u0432\u0430\u0440\u0442\u0438\u0440\u043D\u044B\u0445 \u0436\u0438\u043B\u044B\u0445 \u0434\u043E\u043C\u043E\u0432 \u0438 \u0416\u041A \u043F\u043E\u0434 \u043A\u043B\u044E\u0447 \u0441 \u0441\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u043E\u0439 \u0438\u043D\u0444\u0440\u0430\u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u043E\u0439",
+    image: "/images/services/service-residential-complexes.png",
+    heroImage: "/images/services/service-residential-complexes.png",
+    description: "URBANTECHSTROY \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u0438\u0437\u0438\u0440\u0443\u0435\u0442\u0441\u044F \u043D\u0430 \u043A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u043D\u043E\u043C \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0435 \u0436\u0438\u043B\u044B\u0445 \u0434\u043E\u043C\u043E\u0432 \u0440\u0430\u0437\u043B\u0438\u0447\u043D\u043E\u0439 \u044D\u0442\u0430\u0436\u043D\u043E\u0441\u0442\u0438. \u041C\u044B \u0440\u0435\u0430\u043B\u0438\u0437\u0443\u0435\u043C \u043F\u0440\u043E\u0435\u043A\u0442\u044B \u043E\u0442 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0438 \u043A\u043E\u043D\u0446\u0435\u043F\u0446\u0438\u0438 \u0434\u043E \u0441\u0434\u0430\u0447\u0438 \u043E\u0431\u044A\u0435\u043A\u0442\u0430 \u0432 \u044D\u043A\u0441\u043F\u043B\u0443\u0430\u0442\u0430\u0446\u0438\u044E. \u041D\u0430\u0448\u0430 \u043A\u043E\u043C\u0430\u043D\u0434\u0430 \u043E\u0431\u0435\u0441\u043F\u0435\u0447\u0438\u0432\u0430\u0435\u0442 \u0432\u044B\u0441\u043E\u043A\u043E\u0435 \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0430 \u0441 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435\u043C \u0441\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0439 \u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432, \u0441\u043E\u0431\u043B\u044E\u0434\u0430\u044F \u0432\u0441\u0435 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0435 \u043D\u043E\u0440\u043C\u044B \u0438 \u0441\u0442\u0430\u043D\u0434\u0430\u0440\u0442\u044B \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438.",
+    benefits: [
+      "\u041F\u043E\u043B\u043D\u044B\u0439 \u0446\u0438\u043A\u043B \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0430 \u043E\u0442 \u043F\u0440\u043E\u0435\u043A\u0442\u0430 \u0434\u043E \u0441\u0434\u0430\u0447\u0438",
+      "\u0421\u043E\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435 \u0432\u0441\u0435\u0445 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0445 \u043D\u043E\u0440\u043C \u0438 \u0441\u0442\u0430\u043D\u0434\u0430\u0440\u0442\u043E\u0432",
+      "\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435 \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u044B\u0445 \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0445 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432",
+      "\u0421\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0435 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438 \u044D\u043D\u0435\u0440\u0433\u043E\u044D\u0444\u0444\u0435\u043A\u0442\u0438\u0432\u043D\u043E\u0441\u0442\u0438",
+      "\u0420\u0430\u0437\u0432\u0438\u0442\u0430\u044F \u0438\u043D\u0444\u0440\u0430\u0441\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430 \u0438 \u0431\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0442\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0438",
+      "\u041A\u043E\u043D\u0442\u0440\u043E\u043B\u044C \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0430 \u043D\u0430 \u043A\u0430\u0436\u0434\u043E\u043C \u044D\u0442\u0430\u043F\u0435 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u0430",
+      "\u0413\u0430\u0440\u0430\u043D\u0442\u0438\u0439\u043D\u043E\u0435 \u043E\u0431\u0441\u043B\u0443\u0436\u0438\u0432\u0430\u043D\u0438\u0435 \u043E\u0431\u044A\u0435\u043A\u0442\u043E\u0432"
+    ],
+    stages: [
+      { step: 1, title: "\u0420\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0430 \u043F\u0440\u043E\u0435\u043A\u0442\u043D\u043E\u0439 \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430\u0446\u0438\u0438 \u0438 \u0441\u043E\u0433\u043B\u0430\u0441\u043E\u0432\u0430\u043D\u0438\u0435" },
+      {
+        step: 2,
+        title: "\u041F\u043E\u0434\u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u043F\u043B\u043E\u0449\u0430\u0434\u043A\u0438 \u0438 \u0438\u043D\u0436\u0435\u043D\u0435\u0440\u043D\u044B\u0435 \u0438\u0437\u044B\u0441\u043A\u0430\u043D\u0438\u044F"
+      },
+      { step: 3, title: "\u0412\u043E\u0437\u0432\u0435\u0434\u0435\u043D\u0438\u0435 \u0444\u0443\u043D\u0434\u0430\u043C\u0435\u043D\u0442\u0430 \u0438 \u043D\u0435\u0441\u0443\u0449\u0438\u0445 \u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0439" },
+      { step: 4, title: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u0441\u0442\u0435\u043D \u0438 \u043F\u0435\u0440\u0435\u043A\u0440\u044B\u0442\u0438\u0439" },
+      {
+        step: 5,
+        title: "\u041C\u043E\u043D\u0442\u0430\u0436 \u0438\u043D\u0436\u0435\u043D\u0435\u0440\u043D\u044B\u0445 \u0441\u0438\u0441\u0442\u0435\u043C (\u044D\u043B\u0435\u043A\u0442\u0440\u0438\u0447\u0435\u0441\u0442\u0432\u043E, \u0432\u043E\u0434\u043E\u0441\u043D\u0430\u0431\u0436\u0435\u043D\u0438\u0435, \u043E\u0442\u043E\u043F\u043B\u0435\u043D\u0438\u0435)"
+      },
+      { step: 6, title: "\u0424\u0430\u0441\u0430\u0434\u043D\u044B\u0435 \u0438 \u043A\u0440\u043E\u0432\u0435\u043B\u044C\u043D\u044B\u0435 \u0440\u0430\u0431\u043E\u0442\u044B" },
+      { step: 7, title: "\u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u044F\u044F \u043E\u0442\u0434\u0435\u043B\u043A\u0430 \u0438 \u0431\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0442\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0438" }
+    ],
+    gallery: [
+      "/images/services/service-gallery-1.png",
+      "/images/services/service-gallery-2.png"
+    ]
+  },
+  {
+    slug: "stroitelstvo-chastnyh-domov",
+    title: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u0447\u0430\u0441\u0442\u043D\u044B\u0445 \u0434\u043E\u043C\u043E\u0432",
+    shortDescription: "\u0418\u043D\u0434\u0438\u0432\u0438\u0434\u0443\u0430\u043B\u044C\u043D\u043E\u0435 \u043F\u0440\u043E\u0435\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 \u0441\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u0447\u0430\u0441\u0442\u043D\u044B\u0445 \u0434\u043E\u043C\u043E\u0432 \u0438 \u043A\u043E\u0442\u0442\u0435\u0434\u0436\u0435\u0439 \u043B\u044E\u0431\u043E\u0439 \u0441\u043B\u043E\u0436\u043D\u043E\u0441\u0442\u0438",
+    image: "/images/services/service-private-houses.png"
+  },
+  {
+    slug: "stroitelstvo-obshchezhitij",
+    title: "\u0421\u0442\u0440\u043E\u0438\u0442\u0435\u043B\u044C\u0441\u0442\u0432\u043E \u043E\u0431\u0449\u0435\u0436\u0438\u0442\u0438\u0439",
+    shortDescription: "\u041F\u0440\u043E\u0435\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 \u0432\u043E\u0437\u0432\u0435\u0434\u0435\u043D\u0438\u0435 \u043E\u0431\u0449\u0435\u0436\u0438\u0442\u0438\u0439 \u0441 \u0443\u0447\u0435\u0442\u043E\u043C \u0432\u0441\u0435\u0445 \u043D\u043E\u0440\u043C \u0438 \u0442\u0440\u0435\u0431\u043E\u0432\u0430\u043D\u0438\u0439 \u0431\u0435\u0437\u043E\u043F\u0430\u0441\u043D\u043E\u0441\u0442\u0438",
+    image: "/images/services/service-dormitories.png"
+  },
+  {
+    slug: "kapitalnyj-remont-zdanij",
+    title: "\u041A\u0430\u043F\u0438\u0442\u0430\u043B\u044C\u043D\u044B\u0439 \u0440\u0435\u043C\u043E\u043D\u0442 \u0437\u0434\u0430\u043D\u0438\u0439",
+    shortDescription: "\u041F\u043E\u043B\u043D\u0430\u044F \u0440\u0435\u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u044F \u0438 \u043A\u0430\u043F\u0438\u0442\u0430\u043B\u044C\u043D\u044B\u0439 \u0440\u0435\u043C\u043E\u043D\u0442 \u0437\u0434\u0430\u043D\u0438\u0439 \u043B\u044E\u0431\u043E\u0433\u043E \u043D\u0430\u0437\u043D\u0430\u0447\u0435\u043D\u0438\u044F \u0441 \u0432\u043E\u0441\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435\u043C \u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0439",
+    image: "/images/services/service-capital-repair.png"
+  },
+  {
+    slug: "betonnye-raboty",
+    title: "\u0411\u0435\u0442\u043E\u043D\u043D\u044B\u0435 \u0440\u0430\u0431\u043E\u0442\u044B",
+    shortDescription: "\u0423\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0444\u0443\u043D\u0434\u0430\u043C\u0435\u043D\u0442\u043E\u0432, \u0441\u0442\u044F\u0436\u0435\u043A, \u043C\u043E\u043D\u043E\u043B\u0438\u0442\u043D\u044B\u0445 \u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0439 \u0441 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u0435\u043C \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u043E\u0433\u043E \u0431\u0435\u0442\u043E\u043D\u0430",
+    image: "/images/services/service-concrete.png"
+  },
+  {
+    slug: "kladochnye-raboty",
+    title: "\u041A\u043B\u0430\u0434\u043E\u0447\u043D\u044B\u0435 \u0440\u0430\u0431\u043E\u0442\u044B",
+    shortDescription: "\u041A\u0438\u0440\u043F\u0438\u0447\u043D\u0430\u044F \u043A\u043B\u0430\u0434\u043A\u0430 \u0441\u0442\u0435\u043D, \u043F\u0435\u0440\u0435\u0433\u043E\u0440\u043E\u0434\u043E\u043A \u0438 \u0434\u0440\u0443\u0433\u0438\u0445 \u043A\u043E\u043D\u0441\u0442\u0440\u0443\u043A\u0446\u0438\u0439 \u0441 \u0441\u043E\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435\u043C \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0438",
+    image: "/images/services/service-masonry.png"
+  },
+  {
+    slug: "blagoustrojstvo-territorij",
+    title: "\u0411\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0442\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0439",
+    shortDescription: "\u041B\u0430\u043D\u0434\u0448\u0430\u0444\u0442\u043D\u043E\u0435 \u043F\u0440\u043E\u0435\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435, \u043E\u0437\u0435\u043B\u0435\u043D\u0435\u043D\u0438\u0435, \u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0434\u043E\u0440\u043E\u0436\u0435\u043A \u0438 \u0431\u043B\u0430\u0433\u043E\u0443\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u043F\u0440\u0438\u043B\u0435\u0433\u0430\u044E\u0449\u0438\u0445 \u0442\u0435\u0440\u0440\u0438\u0442\u043E\u0440\u0438\u0439",
+    image: "/images/services/service-landscaping.png"
+  },
+  {
+    slug: "fasadnye-raboty",
+    title: "\u0424\u0430\u0441\u0430\u0434\u043D\u044B\u0435 \u0440\u0430\u0431\u043E\u0442\u044B",
+    shortDescription: "\u0423\u0442\u0435\u043F\u043B\u0435\u043D\u0438\u0435 \u0438 \u043E\u0442\u0434\u0435\u043B\u043A\u0430 \u0444\u0430\u0441\u0430\u0434\u043E\u0432 \u0441\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u043C\u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u0430\u043C\u0438, \u043D\u0430\u0432\u0435\u0441\u043D\u044B\u0435 \u0432\u0435\u043D\u0442\u0438\u043B\u0438\u0440\u0443\u0435\u043C\u044B\u0435 \u0444\u0430\u0441\u0430\u0434\u044B",
+    image: "/images/services/service-facade.png"
+  },
+  {
+    slug: "montazh-metallokarkasov",
+    title: "\u041C\u043E\u043D\u0442\u0430\u0436 \u043C\u0435\u0442\u0430\u043B\u043B\u043E\u043A\u0430\u0440\u043A\u0430\u0441\u043E\u0432",
+    shortDescription: "\u0418\u0437\u0433\u043E\u0442\u043E\u0432\u043B\u0435\u043D\u0438\u0435 \u0438 \u043C\u043E\u043D\u0442\u0430\u0436 \u043C\u0435\u0442\u0430\u043B\u043B\u0438\u0447\u0435\u0441\u043A\u0438\u0445 \u043A\u0430\u0440\u043A\u0430\u0441\u043E\u0432 \u0434\u043B\u044F \u0437\u0434\u0430\u043D\u0438\u0439, \u0430\u043D\u0433\u0430\u0440\u043E\u0432 \u0438 \u043F\u0440\u043E\u043C\u044B\u0448\u043B\u0435\u043D\u043D\u044B\u0445 \u043E\u0431\u044A\u0435\u043A\u0442\u043E\u0432",
+    image: "/images/services/service-metal-frames.png"
+  },
+  {
+    slug: "vnutrennyaya-otdelka",
+    title: "\u0412\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u044F\u044F \u043E\u0442\u0434\u0435\u043B\u043A\u0430",
+    shortDescription: "\u041A\u043E\u043C\u043F\u043B\u0435\u043A\u0441\u043D\u0430\u044F \u0432\u043D\u0443\u0442\u0440\u0435\u043D\u043D\u044F\u044F \u043E\u0442\u0434\u0435\u043B\u043A\u0430 \u043F\u043E\u043C\u0435\u0449\u0435\u043D\u0438\u0439: \u0448\u0442\u0443\u043A\u0430\u0442\u0443\u0440\u043A\u0430, \u0448\u043F\u0430\u043A\u043B\u0435\u0432\u043A\u0430, \u043F\u043E\u043A\u0440\u0430\u0441\u043A\u0430, \u043F\u043E\u043A\u043B\u0435\u0439\u043A\u0430 \u043E\u0431\u043E\u0435\u0432",
+    image: "/images/services/service-interior.png"
+  },
+  {
+    slug: "naruzhnaya-otdelka",
+    title: "\u041D\u0430\u0440\u0443\u0436\u043D\u0430\u044F \u043E\u0442\u0434\u0435\u043B\u043A\u0430",
+    shortDescription: "\u041A\u0430\u0447\u0435\u0441\u0442\u0432\u0435\u043D\u043D\u0430\u044F \u043D\u0430\u0440\u0443\u0436\u043D\u0430\u044F \u043E\u0442\u0434\u0435\u043B\u043A\u0430 \u0437\u0434\u0430\u043D\u0438\u0439 \u0441 \u043F\u0440\u0438\u043C\u0435\u043D\u0435\u043D\u0438\u0435\u043C \u0441\u043E\u0432\u0440\u0435\u043C\u0435\u043D\u043D\u044B\u0445 \u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438\u0439 \u0438 \u043C\u0430\u0442\u0435\u0440\u0438\u0430\u043B\u043E\u0432",
+    image: "/images/services/service-exterior-finish.png"
+  },
+  {
+    slug: "krovelnye-raboty",
+    title: "\u041A\u0440\u043E\u0432\u0435\u043B\u044C\u043D\u044B\u0435 \u0440\u0430\u0431\u043E\u0442\u044B",
+    shortDescription: "\u0423\u0441\u0442\u0440\u043E\u0439\u0441\u0442\u0432\u043E \u0438 \u0440\u0435\u043C\u043E\u043D\u0442 \u043A\u0440\u043E\u0432\u043B\u0438 \u043B\u044E\u0431\u043E\u0439 \u0441\u043B\u043E\u0436\u043D\u043E\u0441\u0442\u0438, \u043C\u043E\u043D\u0442\u0430\u0436 \u0432\u043E\u0434\u043E\u0441\u0442\u043E\u0447\u043D\u044B\u0445 \u0441\u0438\u0441\u0442\u0435\u043C",
+    image: "/images/services/service-roofing.png"
+  }
+];
+
+function filterServiceExtras(extras, hidden, deleted) {
+  return extras.filter((e) => {
+    if (deleted.has(e.slug)) return false;
+    const st = services.find((s) => s.slug === e.slug);
+    if (!st) return true;
+    return hidden.has(st.slug);
+  });
+}
+function filterProjectExtras(extras, hidden, deleted) {
+  return extras.filter((e) => {
+    if (deleted.has(e.slug)) return false;
+    const st = projects.find((s) => s.slug === e.slug);
+    if (!st) return true;
+    return hidden.has(st.slug);
+  });
+}
+function getMergedServices() {
+  const raw = getOverridesJson("services");
+  const { meta, patches } = splitOverridesPayload(raw);
+  const hidden = new Set(meta.hiddenSlugs);
+  const deleted = new Set(meta.deletedSlugs);
+  const extrasSafe = filterServiceExtras(meta.extras, hidden, deleted);
+  const fromStatic = services.filter((s) => !hidden.has(s.slug) && !deleted.has(s.slug)).map((s) => applyObjectPatch(s, patches[s.slug]));
+  const used = new Set(fromStatic.map((s) => s.slug));
+  const extras = extrasSafe.filter((e) => e.slug && !used.has(e.slug));
+  return [...fromStatic, ...extras];
+}
+function getMergedProjects() {
+  const raw = getOverridesJson("projects");
+  const { meta, patches } = splitOverridesPayload(raw);
+  const hidden = new Set(meta.hiddenSlugs);
+  const deleted = new Set(meta.deletedSlugs);
+  const extrasSafe = filterProjectExtras(meta.extras, hidden, deleted);
+  const fromStatic = projects.filter((p) => !hidden.has(p.slug) && !deleted.has(p.slug)).map((p) => applyObjectPatch(p, patches[p.slug]));
+  const used = new Set(fromStatic.map((p) => p.slug));
+  const extras = extrasSafe.filter((e) => e.slug && !used.has(e.slug));
+  return [...fromStatic, ...extras].map(normalizeProject);
+}
+function getServiceDraftsMap() {
+  const raw = getOverridesJson("services");
+  const { meta, patches } = splitOverridesPayload(raw);
+  const hidden = new Set(meta.hiddenSlugs);
+  const deleted = new Set(meta.deletedSlugs);
+  const map = {};
+  for (const s of services) {
+    if (deleted.has(s.slug)) continue;
+    map[s.slug] = applyObjectPatch(s, patches[s.slug]);
+  }
+  for (const e of meta.extras) {
+    if (deleted.has(e.slug)) continue;
+    const st = services.find((s) => s.slug === e.slug);
+    if (!st || hidden.has(st.slug)) {
+      map[e.slug] = { ...e };
+    }
+  }
+  return map;
+}
+function getProjectDraftsMap() {
+  const raw = getOverridesJson("projects");
+  const { meta, patches } = splitOverridesPayload(raw);
+  const hidden = new Set(meta.hiddenSlugs);
+  const deleted = new Set(meta.deletedSlugs);
+  const map = {};
+  for (const p of projects) {
+    if (deleted.has(p.slug)) continue;
+    map[p.slug] = applyObjectPatch(p, patches[p.slug]);
+  }
+  for (const e of meta.extras) {
+    if (deleted.has(e.slug)) continue;
+    const st = projects.find((s) => s.slug === e.slug);
+    if (!st || hidden.has(st.slug)) {
+      map[e.slug] = { ...e };
+    }
+  }
+  for (const slug of Object.keys(map)) {
+    map[slug] = normalizeProject(map[slug]);
+  }
+  return map;
+}
+function mergeOverrides(current, patch) {
+  const next = { ...current };
+  for (const [slug, fields] of Object.entries(patch)) {
+    if (slug === CONTENT_META_KEY) {
+      if (fields === null || fields === void 0) {
+        delete next[CONTENT_META_KEY];
+        continue;
+      }
+      if (typeof fields === "object" && !Array.isArray(fields)) {
+        next[CONTENT_META_KEY] = structuredClone(
+          fields
+        );
+      }
+      continue;
+    }
+    if (fields === null || fields === void 0) {
+      delete next[slug];
+      continue;
+    }
+    if (typeof fields !== "object" || Array.isArray(fields)) continue;
+    const prev = next[slug] && typeof next[slug] === "object" && !Array.isArray(next[slug]) ? next[slug] : {};
+    next[slug] = { ...prev, ...fields };
+  }
+  return next;
+}
+function dedupeHiddenSlugs(slugs) {
+  return [...new Set(slugs)];
+}
+function dedupeExtrasBySlug(extras) {
+  const seen = /* @__PURE__ */ new Set();
+  const out = [];
+  for (const e of extras) {
+    if (!e.slug || seen.has(e.slug)) continue;
+    seen.add(e.slug);
+    out.push(e);
+  }
+  return out;
+}
+function normalizePersistedServices(raw) {
+  const { meta, patches } = splitOverridesPayload(raw);
+  const allow = new Set(services.map((s) => s.slug));
+  const deleted = new Set(meta.deletedSlugs);
+  const hiddenClean = dedupeHiddenSlugs(
+    meta.hiddenSlugs.filter((s) => !deleted.has(s))
+  );
+  const extras = dedupeExtrasBySlug(
+    meta.extras.filter((e) => !deleted.has(e.slug))
+  );
+  const out = {
+    [CONTENT_META_KEY]: {
+      hiddenSlugs: hiddenClean,
+      deletedSlugs: dedupeHiddenSlugs(meta.deletedSlugs),
+      extras: extras.map((e) => ({ ...e }))
+    }
+  };
+  for (const slug of allow) {
+    if (deleted.has(slug)) continue;
+    const v = patches[slug];
+    if (v !== null && v !== void 0 && typeof v === "object" && !Array.isArray(v)) {
+      out[slug] = v;
+    }
+  }
+  return out;
+}
+function normalizePersistedProjects(raw) {
+  const { meta, patches } = splitOverridesPayload(raw);
+  const allow = new Set(projects.map((p) => p.slug));
+  const deleted = new Set(meta.deletedSlugs);
+  const hiddenClean = dedupeHiddenSlugs(
+    meta.hiddenSlugs.filter((s) => !deleted.has(s))
+  );
+  const extras = dedupeExtrasBySlug(
+    meta.extras.filter((e) => !deleted.has(e.slug))
+  );
+  const out = {
+    [CONTENT_META_KEY]: {
+      hiddenSlugs: hiddenClean,
+      deletedSlugs: dedupeHiddenSlugs(meta.deletedSlugs),
+      extras: extras.map((e) => ({ ...e }))
+    }
+  };
+  for (const slug of allow) {
+    if (deleted.has(slug)) continue;
+    const v = patches[slug];
+    if (v !== null && v !== void 0 && typeof v === "object" && !Array.isArray(v)) {
+      out[slug] = v;
+    }
+  }
+  return out;
+}
+
+const projects_get$2 = defineEventHandler((event) => {
+  assertAdmin(event);
+  const raw = getOverridesJson("projects");
+  const { meta } = splitOverridesPayload(raw);
+  const defaults = Object.fromEntries(
+    projects.map((p) => [p.slug, { ...p }])
+  );
+  return {
+    merged: getMergedProjects(),
+    overrides: raw,
+    staticSlugs: projects.map((p) => p.slug),
+    hiddenSlugs: meta.hiddenSlugs,
+    deletedSlugs: meta.deletedSlugs,
+    extras: meta.extras,
+    drafts: getProjectDraftsMap(),
+    defaults
+  };
+});
+
+const projects_get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: projects_get$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const MAX_BYTES = 5 * 1024 * 1024;
+const MIME_TO_EXT = {
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif"
+};
+const STORED_NAME_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|gif)$/i;
+function getUploadRoot() {
+  const config = useRuntimeConfig();
+  const dir = config.uploadDir || ".data/uploads";
+  return isAbsolute(dir) ? dir : join(process.cwd(), dir);
+}
+function ensureUploadDir() {
+  const root = getUploadRoot();
+  mkdirSync(root, { recursive: true });
+  return root;
+}
+function isSafeStoredFilename(name) {
+  return STORED_NAME_RE.test(name);
+}
+function extForImageMime(mime) {
+  var _a, _b, _c;
+  const normalized = (_b = (_a = mime.split(";")[0]) == null ? void 0 : _a.trim().toLowerCase()) != null ? _b : "";
+  return (_c = MIME_TO_EXT[normalized]) != null ? _c : null;
+}
+function assertImageSize(buf) {
+  if (buf.length > MAX_BYTES) {
+    throw createError({
+      statusCode: 413,
+      statusMessage: "\u0424\u0430\u0439\u043B \u0431\u043E\u043B\u044C\u0448\u0435 5 \u041C\u0411"
+    });
+  }
+}
+async function saveUploadedImage(buf, mime) {
+  assertImageSize(buf);
+  const ext = extForImageMime(mime);
+  if (!ext) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u0414\u043E\u043F\u0443\u0441\u0442\u0438\u043C\u044B \u0442\u043E\u043B\u044C\u043A\u043E JPEG, PNG, WebP, GIF"
+    });
+  }
+  const { randomUUID } = await import('node:crypto');
+  const name = `${randomUUID()}.${ext}`;
+  const root = ensureUploadDir();
+  const full = join(root, name);
+  await writeFile(full, buf);
+  return name;
+}
+function resolveStoredImagePath(name) {
+  if (!isSafeStoredFilename(name)) return null;
+  const full = join(getUploadRoot(), name);
+  if (!existsSync(full)) return null;
+  return full;
+}
+function mimeForStoredFile(name) {
+  var _a;
+  const ext = (_a = name.split(".").pop()) == null ? void 0 : _a.toLowerCase();
+  switch (ext) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "png":
+      return "image/png";
+    case "webp":
+      return "image/webp";
+    case "gif":
+      return "image/gif";
+    default:
+      return "application/octet-stream";
+  }
+}
+function createImageReadStream(path) {
+  return createReadStream(path);
+}
+function listSafeStoredFilenamesInUploadDir() {
+  const root = getUploadRoot();
+  if (!existsSync(root)) return [];
+  return readdirSync(root).filter((name) => isSafeStoredFilename(name));
+}
+function tryDeleteStoredUpload(name) {
+  if (!isSafeStoredFilename(name)) return false;
+  const full = resolveStoredImagePath(name);
+  if (!full) return false;
+  try {
+    unlinkSync(full);
+    return true;
+  } catch {
+    return false;
+  }
+}
+function deleteUploadFilesNotIn(referenced) {
+  const deleted = [];
+  for (const name of listSafeStoredFilenamesInUploadDir()) {
+    if (!referenced.has(name) && tryDeleteStoredUpload(name)) {
+      deleted.push(name);
+    }
+  }
+  return deleted;
+}
+
+function collectManagedUploadFilenamesFromString(str, out) {
+  var _a;
+  const re = /\/api\/uploads\/([^?\s"'<>]+)/gi;
+  let m;
+  while ((m = re.exec(str)) !== null) {
+    const raw = (_a = m[1]) == null ? void 0 : _a.split("/")[0];
+    if (!raw) continue;
+    let name;
+    try {
+      name = decodeURIComponent(raw);
+    } catch {
+      name = raw;
+    }
+    if (isSafeStoredFilename(name)) out.add(name);
+  }
+}
+function collectManagedUploadFilenamesFromJson(value, out) {
+  if (value === null || value === void 0) return;
+  if (typeof value === "string") {
+    collectManagedUploadFilenamesFromString(value, out);
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) collectManagedUploadFilenamesFromJson(item, out);
+    return;
+  }
+  if (typeof value === "object") {
+    for (const v of Object.values(value)) {
+      collectManagedUploadFilenamesFromJson(v, out);
+    }
+  }
+}
+function getReferencedManagedUploadFilenames() {
+  const out = /* @__PURE__ */ new Set();
+  collectManagedUploadFilenamesFromJson(getOverridesJson("services"), out);
+  collectManagedUploadFilenamesFromJson(getOverridesJson("projects"), out);
+  return out;
+}
+function pruneUnusedManagedUploads() {
+  const refs = getReferencedManagedUploadFilenames();
+  return deleteUploadFilesNotIn(refs);
+}
+
+const projects_put = defineEventHandler(async (event) => {
+  assertAdmin(event);
+  const body = await readBody(event);
+  if (!body || typeof body !== "object") {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041D\u0435\u0432\u0435\u0440\u043D\u043E\u0435 \u0442\u0435\u043B\u043E \u0437\u0430\u043F\u0440\u043E\u0441\u0430"
+    });
+  }
+  const current = getOverridesJson("projects");
+  const next = mergeOverrides(current, body);
+  const normalized = normalizePersistedProjects(next);
+  saveOverridesJson("projects", normalized);
+  pruneUnusedManagedUploads();
+  return { ok: true, overrides: normalized };
+});
+
+const projects_put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: projects_put
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const services_get$2 = defineEventHandler((event) => {
+  assertAdmin(event);
+  const raw = getOverridesJson("services");
+  const { meta } = splitOverridesPayload(raw);
+  const defaults = Object.fromEntries(
+    services.map((s) => [s.slug, { ...s }])
+  );
+  return {
+    merged: getMergedServices(),
+    overrides: raw,
+    staticSlugs: services.map((s) => s.slug),
+    hiddenSlugs: meta.hiddenSlugs,
+    deletedSlugs: meta.deletedSlugs,
+    extras: meta.extras,
+    drafts: getServiceDraftsMap(),
+    defaults
+  };
+});
+
+const services_get$3 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: services_get$2
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const services_put = defineEventHandler(async (event) => {
+  assertAdmin(event);
+  const body = await readBody(event);
+  if (!body || typeof body !== "object") {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041D\u0435\u0432\u0435\u0440\u043D\u043E\u0435 \u0442\u0435\u043B\u043E \u0437\u0430\u043F\u0440\u043E\u0441\u0430"
+    });
+  }
+  const current = getOverridesJson("services");
+  const next = mergeOverrides(current, body);
+  const normalized = normalizePersistedServices(next);
+  saveOverridesJson("services", normalized);
+  pruneUnusedManagedUploads();
+  return { ok: true, overrides: normalized };
+});
+
+const services_put$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: services_put
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const register_post = defineEventHandler(async (event) => {
+  var _a, _b;
+  const config = useRuntimeConfig(event);
+  const body = await readBody(event).catch(() => ({}));
+  if (countAdmins() > 0) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "\u0420\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u044F \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u0430 \u0442\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440\u0430. \u0414\u043E\u0431\u0430\u0432\u044C\u0442\u0435 \u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u0435\u0439 \u0432 \u0440\u0430\u0437\u0434\u0435\u043B\u0435 \xAB\u0410\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440\u044B\xBB."
+    });
+  }
+  const emailRaw = (_a = body == null ? void 0 : body.email) != null ? _a : "";
+  const password = (_b = body == null ? void 0 : body.password) != null ? _b : "";
+  const setupKey = typeof (body == null ? void 0 : body.setupKey) === "string" ? body.setupKey : "";
+  if (!emailRaw || !password) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 email \u0438 \u043F\u0430\u0440\u043E\u043B\u044C"
+    });
+  }
+  const email = normalizeAdminEmail(emailRaw);
+  if (!isValidAdminEmail(email)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041B\u043E\u0433\u0438\u043D \u0434\u043E\u043B\u0436\u0435\u043D \u0431\u044B\u0442\u044C \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u043C \u0430\u0434\u0440\u0435\u0441\u043E\u043C \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B"
+    });
+  }
+  const envSetupKey = String(config.adminSetupKey || "");
+  if (!envSetupKey) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "\u0417\u0430\u0434\u0430\u0439\u0442\u0435 NUXT_ADMIN_SETUP_KEY \u0432 .env \u0434\u043B\u044F \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438 \u043F\u0435\u0440\u0432\u043E\u0433\u043E \u0430\u0434\u043C\u0438\u043D\u0438\u0441\u0442\u0440\u0430\u0442\u043E\u0440\u0430 \u043B\u0438\u0431\u043E \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439\u0442\u0435 NUXT_ADMIN_PASSWORD + NUXT_ADMIN_EMAIL (\u0443\u0447\u0451\u0442\u043D\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u044C \u0441\u043E\u0437\u0434\u0430\u0451\u0442\u0441\u044F \u0430\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u0438 \u043F\u0440\u0438 \u043F\u0435\u0440\u0432\u043E\u043C \u043E\u0431\u0440\u0430\u0449\u0435\u043D\u0438\u0438 \u043A \u0441\u0435\u0440\u0432\u0435\u0440\u0443)."
+    });
+  }
+  if (setupKey !== envSetupKey) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: "\u041D\u0435\u0432\u0435\u0440\u043D\u044B\u0439 \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u044B\u0439 \u043A\u043B\u044E\u0447 \u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0430\u0446\u0438\u0438"
+    });
+  }
+  const row = insertAdmin(email, password);
+  createAdminSession(event, row.id);
+  return { ok: true, id: row.id };
+});
+
+const register_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: register_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const upload_post = defineEventHandler(async (event) => {
+  assertAdmin(event);
+  const parts = await readMultipartFormData(event);
+  const filePart = parts == null ? void 0 : parts.find((p) => {
+    var _a;
+    return p.name === "file" && ((_a = p.data) == null ? void 0 : _a.length);
+  });
+  if (!(filePart == null ? void 0 : filePart.data)) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "\u041D\u0443\u0436\u043D\u043E \u043F\u043E\u043B\u0435 file"
+    });
+  }
+  const mime = filePart.type || "application/octet-stream";
+  const name = await saveUploadedImage(filePart.data, mime);
+  const url = `/api/uploads/${name}`;
+  return { url };
+});
+
+const upload_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: upload_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const projects_get = defineEventHandler(() => {
+  return getMergedProjects();
+});
+
+const projects_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: projects_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const services_get = defineEventHandler(() => {
+  return getMergedServices();
+});
+
+const services_get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: services_get
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const RATE_WINDOW_MS = 60 * 60 * 1e3;
+const RATE_MAX = 30;
+const rateMap = /* @__PURE__ */ new Map();
+function checkRateLimit(ip) {
+  const now = Date.now();
+  let row = rateMap.get(ip);
+  if (!row || row.resetAt < now) {
+    row = { count: 0, resetAt: now + RATE_WINDOW_MS };
+    rateMap.set(ip, row);
+  }
+  row.count++;
+  return row.count <= RATE_MAX;
+}
+const leads_post = defineEventHandler(async (event) => {
+  var _a, _b, _c, _d;
+  const ip = ((_b = (_a = getHeader(event, "x-forwarded-for")) == null ? void 0 : _a.split(",")[0]) == null ? void 0 : _b.trim()) || ((_c = event.node.req.socket) == null ? void 0 : _c.remoteAddress) || "unknown";
+  if (!checkRateLimit(ip)) {
+    throw createError({
+      statusCode: 429,
+      statusMessage: "\u0421\u043B\u0438\u0448\u043A\u043E\u043C \u043C\u043D\u043E\u0433\u043E \u0437\u0430\u044F\u0432\u043E\u043A"
+    });
+  }
+  const body = await readBody(event).catch(() => ({}));
+  const source = body.source === "calculator" ? "calculator" : "contact";
+  const phone = String((_d = body.phone) != null ? _d : "").trim().slice(0, 40);
+  const name = body.name ? String(body.name).trim().slice(0, 200) : null;
+  const email = body.email ? String(body.email).trim().slice(0, 120) : null;
+  const message = body.message ? String(body.message).trim().slice(0, 5e3) : null;
+  if (phone.length < 5) {
+    throw createError({ statusCode: 400, statusMessage: "\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u0442\u0435\u043B\u0435\u0444\u043E\u043D" });
+  }
+  let metadata = null;
+  if (body.metadata !== void 0 && body.metadata !== null) {
+    try {
+      metadata = JSON.stringify(body.metadata).slice(0, 8e3);
+    } catch {
+      metadata = null;
+    }
+  }
+  const createdAt = Date.now();
+  useDb().prepare(
+    `INSERT INTO leads (source, name, phone, email, message, metadata, created_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).run(source, name, phone, email, message, metadata, createdAt);
+  return { ok: true };
+});
+
+const leads_post$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: leads_post
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const _filename__get = defineEventHandler((event) => {
+  const name = getRouterParam(event, "filename");
+  if (!name) {
+    throw createError({ statusCode: 404, statusMessage: "Not found" });
+  }
+  const path = resolveStoredImagePath(name);
+  if (!path) {
+    throw createError({ statusCode: 404, statusMessage: "Not found" });
+  }
+  setResponseHeader(event, "Content-Type", mimeForStoredFile(name));
+  setResponseHeader(
+    event,
+    "Cache-Control",
+    "public, max-age=31536000, immutable"
+  );
+  return sendStream(event, createImageReadStream(path));
+});
+
+const _filename__get$1 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: _filename__get
+}, Symbol.toStringTag, { value: 'Module' }));
+
 function renderPayloadResponse(ssrContext) {
 	return {
 		body: encodeForwardSlashes(stringify(splitPayload(ssrContext).payload, ssrContext["~payloadReducers"])) ,
@@ -3124,18 +4491,6 @@ const handler = defineRenderHandler(async (event) => {
 			crossorigin: "anonymous",
 			href: payloadURL
 		} ] }, headEntryOptions);
-	}
-	if (ssrContext["~preloadManifest"] && !NO_SCRIPTS) {
-		ssrContext.head.push({ link: [{
-			rel: "preload",
-			as: "fetch",
-			fetchpriority: "low",
-			crossorigin: "anonymous",
-			href: buildAssetsURL(`builds/meta/${ssrContext.runtimeConfig.app.buildId}.json`)
-		}] }, {
-			...headEntryOptions,
-			tagPriority: "low"
-		});
 	}
 	
 	if (inlinedStyles.length) {

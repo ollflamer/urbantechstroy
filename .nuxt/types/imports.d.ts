@@ -349,6 +349,8 @@ declare global {
   const useSessionStorage: typeof import('../../node_modules/@vueuse/core').useSessionStorage
   const useShadowRoot: typeof import('../../node_modules/vue').useShadowRoot
   const useShare: typeof import('../../node_modules/@vueuse/core').useShare
+  const useSiteProjectsList: typeof import('../../composables/useSiteProjectsList').useSiteProjectsList
+  const useSiteServicesList: typeof import('../../composables/useSiteServicesList').useSiteServicesList
   const useSlots: typeof import('../../node_modules/vue').useSlots
   const useSlugify: typeof import('../../composables/useSlugify').useSlugify
   const useSorted: typeof import('../../node_modules/@vueuse/core').useSorted
@@ -775,6 +777,8 @@ declare module 'vue' {
     readonly useSessionStorage: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useSessionStorage']>
     readonly useShadowRoot: UnwrapRef<typeof import('../../node_modules/vue')['useShadowRoot']>
     readonly useShare: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useShare']>
+    readonly useSiteProjectsList: UnwrapRef<typeof import('../../composables/useSiteProjectsList')['useSiteProjectsList']>
+    readonly useSiteServicesList: UnwrapRef<typeof import('../../composables/useSiteServicesList')['useSiteServicesList']>
     readonly useSlots: UnwrapRef<typeof import('../../node_modules/vue')['useSlots']>
     readonly useSlugify: UnwrapRef<typeof import('../../composables/useSlugify')['useSlugify']>
     readonly useSorted: UnwrapRef<typeof import('../../node_modules/@vueuse/core')['useSorted']>

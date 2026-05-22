@@ -65,15 +65,15 @@
 			>
 				<div class="flex flex-col gap-3 sm:gap-4">
 					<Reveal
-						v-for="(src, index) in aboutImagesLeft"
-						:key="src"
+						v-for="(img, index) in aboutImagesLeft"
+						:key="img.src"
 						variant="scale"
 						:delay="staggerDelay(index, 0.1)"
 						class="overflow-hidden rounded-[12px] sm:rounded-[16px]"
 					>
 						<img
-							:src="src"
-							alt=""
+							:src="img.src"
+							:alt="img.alt"
 							class="h-full w-full object-cover"
 							:class="
 								index === 0
@@ -86,15 +86,15 @@
 
 				<div class="flex flex-col gap-3 pt-6 sm:gap-4 sm:pt-8">
 					<Reveal
-						v-for="(src, index) in aboutImagesRight"
-						:key="src"
+						v-for="(img, index) in aboutImagesRight"
+						:key="img.src"
 						variant="scale"
 						:delay="staggerDelay(index, 0.1, 0.12)"
 						class="overflow-hidden rounded-[12px] sm:rounded-[16px]"
 					>
 						<img
-							:src="src"
-							alt=""
+							:src="img.src"
+							:alt="img.alt"
 							class="h-full w-full object-cover"
 							:class="
 								index === 0
@@ -113,12 +113,24 @@
 import { homeAboutFeatures } from '~/data/about'
 
 const aboutImagesLeft = [
-	'/images/about-construction-team.png',
-	'/images/about-modern-building.png',
+	{
+		src: '/images/about-home-crane-worker.png',
+		alt: 'Строитель на объекте даёт сигнал крановщику',
+	},
+	{
+		src: '/images/about-home-welding.png',
+		alt: 'Сварка металлоконструкций в производственном цеху',
+	},
 ]
 
 const aboutImagesRight = [
-	'/images/about-construction-workers.png',
-	'/images/about-building-construction.png',
+	{
+		src: '/images/about-home-foundation.png',
+		alt: 'Устройство свайного основания и арматура на стройплощадке',
+	},
+	{
+		src: '/images/about-home-excavation.png',
+		alt: 'Земляные работы: экскаваторы и буровая установка в котловане',
+	},
 ]
 </script>

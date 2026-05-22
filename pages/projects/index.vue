@@ -23,7 +23,7 @@
 							:key="cat.id"
 							type="button"
 							:class="filterButtonClass(cat.id)"
-							@click="activeCategory = cat.id"
+							@click="selectCategory(cat.id)"
 						>
 							{{ cat.label }}
 						</button>
@@ -59,14 +59,35 @@
 import {
 	projectCategories,
 	getProjectsByCategory,
+	parseProjectsCategoryQuery,
 	type ProjectCategory,
 } from '~/data/projects'
 
-const activeCategory = ref<ProjectCategory>('all')
+const route = useRoute()
+const router = useRouter()
+
+const { data: projectsList } = await useSiteProjectsList()
+
+const activeCategory = computed<ProjectCategory>(() =>
+	parseProjectsCategoryQuery(route.query.cat),
+)
 
 const filteredProjects = computed(() =>
-	getProjectsByCategory(activeCategory.value),
+	getProjectsByCategory(activeCategory.value, projectsList.value ?? undefined),
 )
+
+function selectCategory(id: ProjectCategory) {
+	const next = { ...route.query } as Record<
+		string,
+		string | string[] | undefined
+	>
+	if (id === 'all') {
+		delete next.cat
+	} else {
+		next.cat = id
+	}
+	void router.replace({ path: route.path, query: next })
+}
 
 const filterButtonClass = (id: ProjectCategory) => {
 	const base =

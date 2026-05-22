@@ -32,6 +32,8 @@ export { computedAsync, asyncComputed, computedEager, eagerComputed, computedInj
 export { definePageMeta } from '../node_modules/nuxt/dist/pages/runtime/composables';
 export { defineLazyHydrationComponent } from '#app/composables/lazy-hydration';
 export { MOTION_EASE, staggerDelay, useReveal } from '../composables/useReveal';
+export { useSiteProjectsList } from '../composables/useSiteProjectsList';
+export { useSiteServicesList } from '../composables/useSiteServicesList';
 export { useSlugify } from '../composables/useSlugify';
 export { usePostsStore } from '../stores/posts';
 export { defineStore, acceptHMRUpdate, usePinia, storeToRefs } from '../node_modules/@pinia/nuxt/dist/runtime/composables';

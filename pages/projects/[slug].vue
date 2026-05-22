@@ -195,14 +195,17 @@
 </template>
 
 <script setup lang="ts">
-import { getProjectBySlug, projects } from '~/data/projects'
-
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
-const project = computed(() => getProjectBySlug(slug.value))
+
+const { data: projectsList } = await useSiteProjectsList()
+
+const project = computed(
+	() => projectsList.value?.find(p => p.slug === slug.value) ?? null,
+)
 
 const relatedProjects = computed(() =>
-	projects
+	(projectsList.value ?? [])
 		.filter(
 			p => p.slug !== slug.value && p.category === project.value?.category,
 		)

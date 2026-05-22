@@ -22,6 +22,39 @@ export const projectCategories: ProjectCategoryOption[] = [
 	{ id: 'landscaping', label: 'Благоустройство' },
 ]
 
+/** Slug категории (без «все») — привязка карточки и фильтр на /projects. */
+export const PROJECT_CATEGORY_IDS: Exclude<ProjectCategory, 'all'>[] = [
+	'residential',
+	'commercial',
+	'industrial',
+	'repair',
+	'metal',
+	'landscaping',
+]
+
+export function isNonAllProjectCategory(
+	id: string,
+): id is Exclude<ProjectCategory, 'all'> {
+	return PROJECT_CATEGORY_IDS.includes(id as Exclude<ProjectCategory, 'all'>)
+}
+
+/** Значение query `cat` → категория фильтра (невалидное → «все»). */
+export function parseProjectsCategoryQuery(value: unknown): ProjectCategory {
+	const raw = Array.isArray(value) ? value[0] : value
+	const s = typeof raw === 'string' ? raw.trim() : ''
+	if (s === 'all' || s === '') return 'all'
+	if (isNonAllProjectCategory(s)) return s
+	return 'all'
+}
+
+/** Исправляет неверную категорию из БД (чтобы фильтр работал предсказуемо). */
+export function normalizeProject(project: Project): Project {
+	if (isNonAllProjectCategory(project.category)) return project
+	const fb = PROJECT_CATEGORY_IDS[0]
+	const label = projectCategories.find(c => c.id === fb)?.label ?? ''
+	return { ...project, category: fb, categoryLabel: label }
+}
+
 export type Project = {
 	slug: string
 	category: Exclude<ProjectCategory, 'all'>
@@ -116,5 +149,12 @@ export const projects: Project[] = [
 export const getProjectBySlug = (slug: string) =>
 	projects.find(p => p.slug === slug) ?? null
 
-export const getProjectsByCategory = (category: ProjectCategory) =>
-	category === 'all' ? projects : projects.filter(p => p.category === category)
+export const getProjectsByCategory = (
+	category: ProjectCategory,
+	list?: Project[],
+) => {
+	const source = list ?? projects
+	return category === 'all'
+		? source
+		: source.filter(p => p.category === category)
+}

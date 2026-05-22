@@ -66,7 +66,7 @@
 								>
 									<option disabled value="">Выберите услугу</option>
 									<option
-										v-for="option in calculatorServiceOptions"
+										v-for="option in serviceOptions"
 										:key="option.value"
 										:value="option.value"
 									>
@@ -126,7 +126,8 @@
 
 						<button
 							type="submit"
-							class="inline-flex h-14 w-full items-center justify-center gap-2 rounded-[14px] bg-gradient-to-r from-[#155DFC] to-[#1447E6] text-[16px] font-medium leading-6 text-white shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.1),0px_10px_15px_-3px_rgba(0,0,0,0.1)] transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99]"
+							:disabled="submitting"
+							class="inline-flex h-14 w-full items-center justify-center gap-2 rounded-[14px] bg-gradient-to-r from-[#155DFC] to-[#1447E6] text-[16px] font-medium leading-6 text-white shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.1),0px_10px_15px_-3px_rgba(0,0,0,0.1)] transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
 						>
 							<img
 								src="/icons/calculator-send-icon.svg"
@@ -139,6 +140,15 @@
 						<p class="text-center text-[14px] leading-5 text-[#4A5565]">
 							Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
 						</p>
+						<p
+							v-if="submitOk"
+							class="text-center text-sm font-medium text-green-700"
+						>
+							Заявка отправлена. Мы свяжемся с вами в ближайшее время.
+						</p>
+						<p v-if="submitError" class="text-center text-sm text-red-600">
+							{{ submitError }}
+						</p>
 					</div>
 				</form>
 			</Reveal>
@@ -148,10 +158,16 @@
 
 <script setup lang="ts">
 import { defineComponent, h } from 'vue'
-import {
-	calculatorBudgetOptions,
-	calculatorServiceOptions,
-} from '~/data/calculator'
+import { calculatorBudgetOptions } from '~/data/calculator'
+
+const { data: servicesList } = await useSiteServicesList()
+
+const serviceOptions = computed(() =>
+	(servicesList.value ?? []).map(s => ({
+		value: s.slug,
+		label: s.title,
+	})),
+)
 
 const form = reactive({
 	serviceType: '',
@@ -161,8 +177,47 @@ const form = reactive({
 	phone: '',
 })
 
-const onSubmit = () => {
-	// TODO: отправка на backend / CRM
+const submitting = ref(false)
+const submitOk = ref(false)
+const submitError = ref('')
+
+const onSubmit = async () => {
+	submitError.value = ''
+	submitOk.value = false
+	submitting.value = true
+	try {
+		const serviceLabel =
+			serviceOptions.value.find(o => o.value === form.serviceType)?.label ??
+			form.serviceType
+
+		await $fetch('/api/leads', {
+			method: 'POST',
+			body: {
+				source: 'calculator',
+				name: form.name,
+				phone: form.phone,
+				metadata: {
+					serviceType: form.serviceType,
+					serviceLabel,
+					area: String(form.area).trim(),
+					budget: form.budget,
+				},
+			},
+		})
+		submitOk.value = true
+		Object.assign(form, {
+			serviceType: '',
+			area: '',
+			budget: '',
+			name: '',
+			phone: '',
+		})
+	} catch {
+		submitError.value =
+			'Не удалось отправить заявку. Попробуйте позже или позвоните нам.'
+	} finally {
+		submitting.value = false
+	}
 }
 
 const CalculatorField = defineComponent({

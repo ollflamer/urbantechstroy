@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { projects } from '~/data/projects'
+const { data: projectsList } = await useSiteProjectsList()
 
-const previewProjects = projects.slice(0, 3)
+const previewProjects = computed(() => (projectsList.value ?? []).slice(0, 3))
 </script>

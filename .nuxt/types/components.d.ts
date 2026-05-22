@@ -14,6 +14,8 @@ type HydrationStrategies = {
 type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }> & T
 
 interface _GlobalComponents {
+  AdminGalleryField: typeof import("../../components/AdminGalleryField.vue")['default']
+  AdminImageField: typeof import("../../components/AdminImageField.vue")['default']
   Reveal: typeof import("../../components/Reveal.vue")['default']
   HomeAbout: typeof import("../../components/home/HomeAbout.vue")['default']
   HomeAdvantages: typeof import("../../components/home/HomeAdvantages.vue")['default']
@@ -51,6 +53,8 @@ interface _GlobalComponents {
   Html: typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Html']
   Body: typeof import("../../node_modules/nuxt/dist/head/runtime/components")['Body']
   NuxtIsland: typeof import("../../node_modules/nuxt/dist/app/components/nuxt-island")['default']
+  LazyAdminGalleryField: LazyComponent<typeof import("../../components/AdminGalleryField.vue")['default']>
+  LazyAdminImageField: LazyComponent<typeof import("../../components/AdminImageField.vue")['default']>
   LazyReveal: LazyComponent<typeof import("../../components/Reveal.vue")['default']>
   LazyHomeAbout: LazyComponent<typeof import("../../components/home/HomeAbout.vue")['default']>
   LazyHomeAdvantages: LazyComponent<typeof import("../../components/home/HomeAdvantages.vue")['default']>

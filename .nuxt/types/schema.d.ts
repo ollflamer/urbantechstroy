@@ -11,12 +11,26 @@ import { NuxtModule, ModuleDependencyMeta } from '@nuxt/schema'
       cdnURL: string,
    },
 
+   adminPassword: string,
+
+   adminBootstrapEmail: string,
+
+   adminSetupKey: string,
+
+   databasePath: string,
+
+   uploadDir: string,
+
    nitro: {
       envPrefix: string,
    },
   }
   interface SharedPublicRuntimeConfig {
    siteName: string,
+
+   siteUrl: string,
+
+   ogDescription: string,
   }
 declare module '@nuxt/schema' {
   interface ModuleDependencies {

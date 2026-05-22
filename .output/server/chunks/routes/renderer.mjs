@@ -1,5 +1,5 @@
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'vue-bundle-renderer/runtime';
-import { j as joinRelativeURL, u as useRuntimeConfig, g as getResponseStatusText, c as getResponseStatus, e as encodePath, f as defineRenderHandler, h as getQuery, i as createError, k as getRouteRules, l as joinURL, b as useNitroApp } from '../_/nitro.mjs';
+import { o as joinRelativeURL, u as useRuntimeConfig, p as getResponseStatusText, q as getResponseStatus, v as encodePath, w as defineRenderHandler, f as getQuery, e as createError, x as getRouteRules, y as joinURL, b as useNitroApp } from '../_/nitro.mjs';
 import { renderToString } from 'vue/server-renderer';
 import { createHead as createHead$1, propsToString, renderSSRHead } from 'unhead/server';
 import { stringify, uneval } from 'devalue';
@@ -394,18 +394,6 @@ const handler = defineRenderHandler(async (event) => {
 			href: payloadURL
 		} ] }, headEntryOptions);
 	}
-	if (ssrContext["~preloadManifest"] && !NO_SCRIPTS) {
-		ssrContext.head.push({ link: [{
-			rel: "preload",
-			as: "fetch",
-			fetchpriority: "low",
-			crossorigin: "anonymous",
-			href: buildAssetsURL(`builds/meta/${ssrContext.runtimeConfig.app.buildId}.json`)
-		}] }, {
-			...headEntryOptions,
-			tagPriority: "low"
-		});
-	}
 	
 	if (inlinedStyles.length) {
 		ssrContext.head.push({ style: inlinedStyles });
@@ -512,5 +500,5 @@ const renderer = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
   default: handler
 }, Symbol.toStringTag, { value: 'Module' }));
 
-export { useSeoMeta as a, baseURL as b, headSymbol as h, publicAssetsURL as p, renderer as r, useHead as u };
+export { useHead as a, baseURL as b, headSymbol as h, publicAssetsURL as p, renderer as r, useSeoMeta as u };
 //# sourceMappingURL=renderer.mjs.map

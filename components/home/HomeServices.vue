@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { services } from '~/data/services'
+const { data: servicesList } = await useSiteServicesList()
 
-const previewServices = services.slice(0, 3)
+const previewServices = computed(() => (servicesList.value ?? []).slice(0, 3))
 </script>

@@ -3,6 +3,55 @@ import type { Serialize, Simplify } from "nitropack/types";
 declare module "nitropack/types" {
   type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
   interface InternalApi {
+    '/api/admin/admins': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/admins.get').default>>>>
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/admins.post').default>>>>
+    }
+    '/api/admin/admins/:id': {
+      'delete': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/admins/[id].delete').default>>>>
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/admins/[id].put').default>>>>
+    }
+    '/api/admin/bootstrap': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/bootstrap.get').default>>>>
+    }
+    '/api/admin/leads': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/leads.get').default>>>>
+    }
+    '/api/admin/login': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/login.post').default>>>>
+    }
+    '/api/admin/logout': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/logout.post').default>>>>
+    }
+    '/api/admin/me': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/me.get').default>>>>
+    }
+    '/api/admin/overrides/projects': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/overrides/projects.get').default>>>>
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/overrides/projects.put').default>>>>
+    }
+    '/api/admin/overrides/services': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/overrides/services.get').default>>>>
+      'put': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/overrides/services.put').default>>>>
+    }
+    '/api/admin/register': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/register.post').default>>>>
+    }
+    '/api/admin/upload': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/admin/upload.post').default>>>>
+    }
+    '/api/content/projects': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/content/projects.get').default>>>>
+    }
+    '/api/content/services': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/content/services.get').default>>>>
+    }
+    '/api/leads': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/leads.post').default>>>>
+    }
+    '/api/uploads/:filename': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/uploads/[filename].get').default>>>>
+    }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/@nuxt/nitro-server/dist/runtime/handlers/renderer').default>>>>
     }

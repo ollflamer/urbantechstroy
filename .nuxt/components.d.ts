@@ -14,6 +14,8 @@ type HydrationStrategies = {
 type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }> & T
 
 
+export const AdminGalleryField: typeof import("../components/AdminGalleryField.vue")['default']
+export const AdminImageField: typeof import("../components/AdminImageField.vue")['default']
 export const Reveal: typeof import("../components/Reveal.vue")['default']
 export const HomeAbout: typeof import("../components/home/HomeAbout.vue")['default']
 export const HomeAdvantages: typeof import("../components/home/HomeAdvantages.vue")['default']
@@ -51,6 +53,8 @@ export const Head: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
+export const LazyAdminGalleryField: LazyComponent<typeof import("../components/AdminGalleryField.vue")['default']>
+export const LazyAdminImageField: LazyComponent<typeof import("../components/AdminImageField.vue")['default']>
 export const LazyReveal: LazyComponent<typeof import("../components/Reveal.vue")['default']>
 export const LazyHomeAbout: LazyComponent<typeof import("../components/home/HomeAbout.vue")['default']>
 export const LazyHomeAdvantages: LazyComponent<typeof import("../components/home/HomeAdvantages.vue")['default']>
