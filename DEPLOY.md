@@ -393,3 +393,108 @@ sudo systemctl restart urbantechstroy
 Если сервис называется иначе — вместо последней строки: `pm2 restart ИМЯ` или как у вас настроено.
 
 После `git pull` на сервере папки **`.nuxt` / `.output` из репозитория** могут обновиться или исчезнуть — не страшно: **`npm run build` всё пересоберёт** локально на VPS.
+
+### 9.1. Если открываете `/admin` и видите «Page not found: /admin»
+
+Это значит: **в текущем `.output` нет маршрута** (на сервере не тот код или не пересобрали после обновления).
+
+**На VPS по SSH:**
+
+```bash
+cd /var/www/urbantechstroy   # ваш каталог
+
+# 1) Есть ли вообще страницы админки в исходниках после pull
+ls -la pages/admin/
+
+# 2) Последний коммит — ваш ли?
+git log -1 --oneline
+
+# 3) Пересборка и перезапуск (обязательно после pull с новыми страницами)
+npm ci
+npm run build
+sudo systemctl restart urbantechstroy
+```
+
+**На своём ПК:** убедитесь, что папка `pages/admin/` **закоммичена и запушена** (`git status`, затем `git push`). Репозиторий на скрине раньше выглядел как старый снимок без админки — если туда не попал merge с `pages/admin`, на сервере после `pull` маршрутов не будет.
+
+**Проверка без браузера** (на VPS, порт подставьте свой):
+
+```bash
+curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1:3000/admin/login
+```
+
+Ожидается **200** или **302** на логин, не **404**.
+
+**Nginx:** для всего сайта должен быть **один** `proxy_pass` на Node, без отдельного `location` со статикой, который перехватывает `/admin` и отдаёт файлы с диска (такого файла нет → 404). Обычно достаточно одного блока `location / { proxy_pass http://127.0.0.1:3000; ... }`.
+
+---
+
+## 10. Как удобно передать данные для разбора («сайт не обновился»)
+
+Скопируйте вывод команд **текстом в чат** (или в один файл `.txt`). **Не присылайте** пароли, полный `.env`, приватные ключи SSH.
+
+### На своём ПК (в папке проекта)
+
+```bash
+git remote -v
+git branch -vv
+git log -3 --oneline
+git status -sb
+```
+
+Если есть сомнение, что push дошёл:
+
+```bash
+git ls-remote origin HEAD
+git rev-parse HEAD
+```
+
+Хеши должны совпадать с тем, что на сервере после `pull`.
+
+### На VPS (SSH), в каталоге сайта
+
+Подставьте свой путь вместо `/var/www/urbantechstroy`:
+
+```bash
+cd /var/www/urbantechstroy
+pwd
+git remote -v
+git branch -vv
+git log -3 --oneline
+git status -sb
+ls -la pages/admin 2>/dev/null || echo "NO pages/admin"
+ls -la .output/server 2>/dev/null | head -5
+```
+
+Как запускается приложение (выберите то, что у вас есть):
+
+```bash
+# systemd
+systemctl status urbantechstroy --no-pager 2>/dev/null || systemctl status nginx --no-pager | head -20
+
+# или PM2
+pm2 list 2>/dev/null
+pm2 describe urbantechstroy 2>/dev/null | head -40
+```
+
+Проверка, отвечает ли Node локально (порт из unit-файла или `pm2`, часто 3000):
+
+```bash
+curl -sI http://127.0.0.1:3000/ | head -5
+curl -sI http://127.0.0.1:3000/admin/login | head -8
+```
+
+### Nginx (без секретов)
+
+```bash
+grep -R "proxy_pass\|root\|try_files" /etc/nginx/sites-enabled/ 2>/dev/null | head -40
+```
+
+Или вставьте **только** блок `server { ... }` для вашего домена, **замазав** пути к сертификатам, если хотите.
+
+### После последнего деплоя (если помните)
+
+- Точные команды, которые выполняли (`git pull`, `npm run build`, `restart` и т.д.).
+- Были ли **ошибки** в конце `npm run build` (последние 30 строк лога).
+
+По этому набору обычно видно: не тот репозиторий/ветка, не тот коммит на сервере, не пересобрали `.output`, процесс смотрит в **другой каталог**, или Nginx отдаёт **старый root**, минуя Node.
