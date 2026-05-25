@@ -445,7 +445,7 @@ const _routes = [
   {
     name: "index",
     path: "/",
-    component: () => import("./_nuxt/index-DPBDwRuD.js")
+    component: () => import("./_nuxt/index-CwPzg6cA.js")
   },
   {
     name: "blog",
@@ -490,7 +490,7 @@ const _routes = [
     name: "admin-projects",
     path: "/admin/projects",
     meta: { ...__nuxt_page_meta$2 || {}, ...{ "middleware": "admin" } },
-    component: () => import("./_nuxt/projects-xtOe249Y.js")
+    component: () => import("./_nuxt/projects-CWH_ZtjC.js")
   },
   {
     name: "admin-register",
@@ -502,7 +502,7 @@ const _routes = [
     name: "admin-services",
     path: "/admin/services",
     meta: { ...__nuxt_page_meta || {}, ...{ "middleware": "admin" } },
-    component: () => import("./_nuxt/services-CpoZfYjB.js")
+    component: () => import("./_nuxt/services-C2aK0eVd.js")
   },
   {
     name: "projects",

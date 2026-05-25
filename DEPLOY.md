@@ -24,7 +24,16 @@
 - **npm** (или `pnpm`/`yarn`, если переведёте проект).
 - **Git**.
 - Для продакшена: **Nginx** (или Caddy) как reverse proxy на `127.0.0.1:PORT` + **HTTPS** (Let’s Encrypt).
-- Пакет **`better-sqlite3`** содержит нативные модули: после `npm ci` на сервере при смене версии Node иногда нужен **`npm rebuild better-sqlite3`**.
+- Пакет **`better-sqlite3`** содержит нативные модули: на **Ubuntu** один раз поставьте компилятор и `make`, иначе `npm ci` упадёт с **`not found: make`**:
+
+  ```bash
+  sudo apt update
+  sudo apt install -y build-essential python3
+  ```
+
+  После смены версии Node на сервере иногда нужен **`npm rebuild better-sqlite3`**.
+
+- **Не запускайте `npm` через `sudo` в каталоге сайта** — иначе `node_modules` станут владением `root`, а приложение от `ubuntu` не сможет их читать/обновлять. Сборку делайте под тем же пользователем, что владеет `/var/www/urbantechstroy` (или поправьте `chown` после ошибочного `sudo npm`).
 
 Проверка версий на сервере:
 
@@ -304,17 +313,23 @@ sudo systemctl restart urbantechstroy
 
 ## 5. PM2 (альтернатива systemd)
 
+В production **Nuxt/Nitro не читает файл `.env` сам по себе** для переменных процесса. Если запускать только `node .output/server/index.mjs` или `pm2 start .output/server/index.mjs`, то **`NUXT_ADMIN_EMAIL` / `NUXT_ADMIN_PASSWORD` не попадают в `process.env`** — первый админ из `.env` не создаётся, на логине будет «Нет учётных записей…».
+
+В репозитории есть **`ecosystem.config.cjs`**: он при старте PM2 подставляет пары ключ=значение из **`.env` в корне проекта`** в окружение процесса.
+
 ```bash
 cd /var/www/urbantechstroy
 npm ci && npm run build
-pm2 start .output/server/index.mjs --name urbantechstroy
+# если раньше запускали вручную с другим именем (например blog) — удалите старый процесс:
+# pm2 delete blog
+pm2 start ecosystem.config.cjs
 pm2 save
 pm2 startup   # один раз — следовать подсказке
 ```
 
-Обновление: те же `git pull`, `npm ci`, `npm run build`, затем `pm2 restart urbantechstroy`.
+Имя приложения в PM2 по умолчанию — **`urbantechstroy`**. Чтобы оставить своё имя (например `blog`), отредактируйте поле `name` в `ecosystem.config.cjs`.
 
-Загрузите переменные: `pm2 start ... --env production` или `ecosystem.config.cjs` с `env_file: '.env'`.
+Обновление: `git pull`, `npm ci`, `npm run build`, затем **`pm2 restart urbantechstroy`** (или ваше имя из `ecosystem.config.cjs`). После **изменения `.env`** обязателен **перезапуск** PM2 — переменные читаются только при старте процесса.
 
 ---
 
@@ -335,13 +350,60 @@ tar -czf backup-$(date +%F).tar.gz /var/lib/urbantechstroy
 
 ## 7. Частые проблемы
 
-| Симптом                             | Что проверить                                                                                   |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 502 от Nginx                        | Запущен ли `node`/systemd, слушает ли `PORT`, совпадает ли `proxy_pass`                         |
-| Админка не логинит                  | HTTPS, один домен, cookie; перезапуск после смены `.env`                                        |
-| «Cannot find module better_sqlite3» | `npm ci` на сервере, та же архитектура; `npm rebuild better-sqlite3`                            |
-| После деплоя пропали лиды/картинки  | БД и uploads не в том месте / удалили `.data` при деплое                                        |
-| Сборка падает по памяти             | На маленьком VPS добавьте swap или собирайте в CI и выкладывайте `.output` (отдельный pipeline) |
+| Симптом                             | Что проверить                                                                                                                |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 502 от Nginx                        | Запущен ли Node (**systemd** или **PM2**), слушает ли `PORT`, совпадает ли `proxy_pass` с портом процесса (см. ниже **7.1**) |
+| Админка не логинит                  | HTTPS, один домен, cookie; **PM2 должен стартовать через `ecosystem.config.cjs`**, иначе `NUXT_ADMIN_*` из `.env` не видны Node; после смены `.env` — `pm2 restart …` |
+| «Cannot find module better_sqlite3» | `npm ci` на сервере, та же архитектура; `npm rebuild better-sqlite3`                                                         |
+| После деплоя пропали лиды/картинки  | БД и uploads не в том месте / удалили `.data` при деплое                                                                     |
+| Сборка падает по памяти             | На маленьком VPS добавьте swap или собирайте в CI и выкладывайте `.output` (отдельный pipeline)                              |
+
+### 7.1. 502 и **PM2**
+
+Nginx отдаёт 502, если до upstream (Node) нет соединения. С **PM2** проверьте по шагам:
+
+```bash
+pm2 list
+pm2 describe ИМЯ_ПРОЦЕССА
+pm2 logs ИМЯ_ПРОЦЕССА --lines 80
+```
+
+- Статус должен быть **online**, не **errored** / **stopped**.
+- В `describe` посмотрите **cwd** (рабочий каталог) — обычно `/var/www/urbantechstroy`, и что **скрипт** указывает на актуальный **`.output/server/index.mjs`** после `npm run build`.
+
+Порт (часто **3000**):
+
+```bash
+ss -tlnp | grep node
+curl -sI http://127.0.0.1:3000/ | head -3
+```
+
+В nginx **`proxy_pass`** должен совпадать с этим портом.
+
+После деплоя:
+
+```bash
+cd /var/www/urbantechstroy
+npm ci && npm run build
+pm2 restart ИМЯ_ПРОЦЕССА
+pm2 save
+```
+
+Если процесс **падает в цикле** — смотрите **логи** (`pm2 logs`): часто нет прав на `.data`, или не собран `better-sqlite3` (нужны `build-essential` и установка **без** `sudo npm` в каталоге проекта).
+
+### 7.2. «Нет учётных записей» и переменные из `.env`
+
+Сообщение на форме входа означает, что в SQLite **ещё нет ни одного админа**. Обычно первый пользователь создаётся из **`NUXT_ADMIN_EMAIL`** и **`NUXT_ADMIN_PASSWORD`** при первом обращении к БД — но только если эти переменные **реально есть в окружении процесса Node**.
+
+Проверка на сервере (в `pm2 list` смотрите **id** в первом столбце):
+
+```bash
+pm2 env <id> | grep NUXT_ADMIN
+```
+
+Если пусто — процесс запущен без `.env`. Перейдите на **`pm2 start ecosystem.config.cjs`** (см. раздел **5**) и **`pm2 restart`** после правок `.env`.
+
+Альтернатива без смены PM2: один раз зарегистрировать админа по **`NUXT_ADMIN_SETUP_KEY`** (ссылка «Первый вход? Регистрация администратора» на форме входа).
 
 ---
 
@@ -351,7 +413,7 @@ tar -czf backup-$(date +%F).tar.gz /var/lib/urbantechstroy
 - [ ] `npm run build` проходит без ошибок.
 - [ ] `.env` заполнен (`NUXT_PUBLIC_SITE_URL`, админ bootstrap или `NUXT_ADMIN_SETUP_KEY`).
 - [ ] Пути к БД и uploads — на постоянном диске, права на запись у пользователя процесса.
-- [ ] Systemd/PM2 настроен, `Restart=on-failure`.
+- [ ] Systemd/PM2 настроен, `Restart=on-failure`; при PM2 — старт через **`ecosystem.config.cjs`**, чтобы подтянулся `.env`.
 - [ ] Nginx → `127.0.0.1:PORT`, HTTPS, `client_max_body_size` для загрузки картинок.
 - [ ] Настроен бэкап `/var/lib/urbantechstroy` (или ваших путей).
 
@@ -498,3 +560,56 @@ grep -R "proxy_pass\|root\|try_files" /etc/nginx/sites-enabled/ 2>/dev/null | he
 - Были ли **ошибки** в конце `npm run build` (последние 30 строк лога).
 
 По этому набору обычно видно: не тот репозиторий/ветка, не тот коммит на сервере, не пересобрали `.output`, процесс смотрит в **другой каталог**, или Nginx отдаёт **старый root**, минуя Node.
+
+---
+
+## 11. `git pull`: «Your local changes would be overwritten» — `.nuxt` / `.output`
+
+Так бывает, если эти папки **когда‑то попали в репозиторий** и на VPS они отслеживаются Git. Сборка меняет файлы → Git считает их «изменёнными» → merge с `pull` запрещён.
+
+**На VPS** (каталог сайта), если **нет ценных незакоммиченных правок** в проекте (на проде обычно так):
+
+```bash
+cd /var/www/urbantechstroy
+git fetch origin
+git reset --hard origin/main
+```
+
+Вместо `main` — ваша ветка (`master` и т.д.). Это сбросит рабочую копию к удалённой ветке и уберёт конфликтующие «локальные изменения» у отслеживаемых файлов.
+
+Затем как обычно:
+
+```bash
+npm ci
+npm run build
+sudo systemctl restart urbantechstroy
+```
+
+**В репозитории на GitHub** (с ПК) желательно **убрать `.nuxt` и `.output` из индекса** и больше не коммитить их (см. раздел 9 в этом файле: `git rm -r --cached .nuxt .output`, обновлённый `.gitignore`, commit, push). Иначе проблема повторится после каждой `npm run build` на сервере.
+
+**Если `reset --hard` страшно** — можно только откатить артефакты и lockfile, потом pull:
+
+```bash
+git restore .nuxt .output package-lock.json
+git pull origin main
+```
+
+**Если `reset --hard` страшно** — можно только откатить артефакты и lockfile, потом pull:
+
+```bash
+git restore .nuxt .output package-lock.json
+git pull origin main
+```
+
+Сработает, только если Git реально видит эти пути как изменённые tracked-файлы (как в вашем сообщении).
+
+### 11.1. `npm ci`: «Missing: @emnapi/core from lock file» (npm 10 на сервере)
+
+`package-lock.json`, сгенерированный **npm 11+**, иногда **не проходит `npm ci` под npm 10** (как на Ubuntu LTS): в lock не хватает явных записей для транзитивных пакетов (`@emnapi/core` / `@emnapi/runtime`).
+
+**Варианты:**
+
+1. **Обновить lock под npm 10** на машине разработки и запушить (в репозитории UrbanTechStroy lock уже приведён к совместимости с `npm ci` при npm 10.8.x).
+2. Либо на сервере поставить **npm 11** (`npm install -g npm@11`) или **Node 22** с актуальным npm — тогда старый lock часто тоже ставится.
+
+Временный обход на VPS (если нужно срочно собрать, а lock ещё старый): **`npm install`** вместо **`npm ci`** (подтянет зависимости и может подправить `package-lock.json` на диске; с сервера lock в Git лучше не пушить — правьте lock локально и пушьте).
